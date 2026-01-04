@@ -52,7 +52,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "install"
+            argument = "login"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

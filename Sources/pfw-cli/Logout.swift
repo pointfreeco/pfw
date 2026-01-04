@@ -12,18 +12,18 @@ struct Logout: ParsableCommand {
   func run() throws {
     let fileManager = FileManager.default
     if clean {
-      if fileManager.fileExists(atPath: directoryURL.path) {
-        try fileManager.removeItem(at: directoryURL)
-        print("Removed data at \(directoryURL.path).")
+      if fileManager.fileExists(atPath: pfwDirectoryURL.path) {
+        try fileManager.removeItem(at: pfwDirectoryURL)
+        print("Removed data at \(pfwDirectoryURL.path).")
       } else {
         print("No data found.")
       }
       return
     }
 
-    if fileManager.fileExists(atPath: storeURL.path) {
-      try fileManager.removeItem(at: storeURL)
-      print("Removed token at \(storeURL.path).")
+    if fileManager.fileExists(atPath: tokenURL.path) {
+      try fileManager.removeItem(at: tokenURL)
+      print("Removed token at \(tokenURL.path).")
       return
     }
     print("No token found.")

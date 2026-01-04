@@ -8,12 +8,12 @@ struct Status: ParsableCommand {
 
   func run() throws {
     let fileManager = FileManager.default
-    let tokenExists = fileManager.fileExists(atPath: storeURL.path)
-    let dataExists = fileManager.fileExists(atPath: directoryURL.path)
+    let tokenExists = fileManager.fileExists(atPath: tokenURL.path)
+    let dataExists = fileManager.fileExists(atPath: pfwDirectoryURL.path)
 
     print("Logged in: \(tokenExists ? "yes" : "no")")
-    print("Token path: \(storeURL.path)")
-    print("Data directory: \(directoryURL.path)")
+    print("Token path: \(tokenURL.path)")
+    print("Data directory: \(pfwDirectoryURL.path)")
     print("Data directory exists: \(dataExists ? "yes" : "no")")
 
     let codexPath = Install.Tool.codex.defaultInstallPath.path

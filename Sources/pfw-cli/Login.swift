@@ -15,21 +15,22 @@ struct Login: AsyncParsableCommand {
   var token: String?
 
   func run() async throws {
+//    do {
+//      _ = try loadToken()
+//      print("Already logged in. Logout before trying to log in again.")
+//      return
+//    } catch {}
+
     if let token {
       try save(token: token)
-      print("Saved token to \(storeURL.path).")
+      print("Saved token to \(tokenURL.path).")
       return
     }
 
     #if canImport(Network)
       let server = try LocalAuthServer()
       let redirectURL = try await server.start()
-      let encodedRedirect =
-        redirectURL.absoluteString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
-        ?? redirectURL.absoluteString
-      let loginURL = URL(
-        string: "https://www.pointfree.co/pfw/login?client=cli&redirect_url=\(encodedRedirect)"
-      )!
+      let loginURL = try makeLoginURL(redirectURL: redirectURL)
       print("Open this URL to log in and approve access:")
       print(loginURL.absoluteString)
       try openInBrowser(loginURL)
@@ -37,9 +38,9 @@ struct Login: AsyncParsableCommand {
       print("\nWaiting for browser redirect...")
       let receivedToken = try await server.waitForToken()
       try save(token: receivedToken)
-      print("Saved token to \(storeURL.path).")
+      print("Saved token to \(tokenURL.path).")
     #else
-      let loginURL = URL(string: "https://www.pointfree.co/pfw/login?client=cli")!
+      let loginURL = makeLoginURL(redirectURL: nil)
       print("Open this URL to log in and approve access:")
       print(loginURL.absoluteString)
       try openInBrowser(loginURL)
@@ -69,6 +70,45 @@ func openInBrowser(_ url: URL) throws {
   #else
     print("Please open this URL in your browser: \(url.absoluteString)")
   #endif
+}
+
+func makeLoginURL(redirectURL: URL?) throws -> URL {
+  guard var components = URLComponents(string: URL.baseURL) else {
+    return URL(string: "https://www.pointfree.co/account/the-way/login")!
+  }
+  components.path = "/account/the-way/login"
+  var items = [
+    URLQueryItem(name: "whoami", value: whoAmI()),
+    URLQueryItem(name: "machine", value: try machine().uuidString)
+  ]
+  if let redirectURL {
+    items.append(URLQueryItem(name: "redirect", value: redirectURL.absoluteString))
+  }
+  components.queryItems = items
+  return components.url ?? URL(string: "https://www.pointfree.co/account/the-way/login")!
+}
+
+func whoAmI() -> String {
+  #if os(macOS) || os(Linux)
+    let process = Process()
+    process.executableURL = URL(fileURLWithPath: "/usr/bin/whoami")
+    let output = Pipe()
+    process.standardOutput = output
+    do {
+      try process.run()
+      process.waitUntilExit()
+      let data = output.fileHandleForReading.readDataToEndOfFile()
+      let value = String(data: data, encoding: .utf8)?
+        .trimmingCharacters(in: .whitespacesAndNewlines)
+      if let value, !value.isEmpty {
+        return value
+      }
+    } catch {
+      // Fall back to the system username.
+    }
+  #endif
+  let fallback = NSUserName()
+  return fallback.isEmpty ? "unknown" : fallback
 }
 
 #if canImport(Network)
