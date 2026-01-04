@@ -27,7 +27,19 @@ struct Install: AsyncParsableCommand {
 
   func run() async throws {
     let token = try loadToken()
-    _ = token  // TODO: use token to access PFW
+    let machine = try machine()
+    let whoami = whoAmI()
+
+    let (data, _) = try await URLSession.shared
+      .data(
+        from: URL(
+          string: "\(URL.baseURL)/account/the-way/download?token=\(token)&machine=\(machine)&whoami=\(whoami)"
+        )!
+      )
+
+    print(String.init(decoding: data, as: UTF8.self))
+    print("!!!")
+
     let installURL = URL(fileURLWithPath: path ?? tool.defaultInstallPath.path)
 
     print("Installing skills for \(tool.rawValue) into \(installURL.path)")
