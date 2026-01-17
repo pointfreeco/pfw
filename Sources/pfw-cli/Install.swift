@@ -42,7 +42,7 @@ struct Install: AsyncParsableCommand {
     try data.write(to: zipURL)
 
     let installURL = URL(fileURLWithPath: path ?? tool.defaultInstallPath.path)
-    try FileManager.default.removeItem(at: installURL)
+    try? FileManager.default.removeItem(at: installURL)
     try FileManager.default.unzipItem(at: zipURL, to: installURL)
     print("Installed skills for \(tool.rawValue) into \(installURL.path)")
   }
