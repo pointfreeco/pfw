@@ -159,13 +159,90 @@ extension BaseSuite {
         attributes: nil
       )
       try fileSystem.write(Data("data".utf8), to: file)
-      #expect(fileSystem.fileExists(atPath: directory.path()))
-      #expect(fileSystem.fileExists(atPath: file.path()))
+      #expect(fileSystem.fileExists(atPath: directory.path))
+      #expect(fileSystem.fileExists(atPath: file.path))
       assertInlineSnapshot(of: fileSystem, as: .description) {
         """
         root/
           dir/
             file "data"
+        """
+      }
+    }
+
+    @Test func createSymbolicLinkRequiresParentDirectory() throws {
+      let link = URL(fileURLWithPath: "/root/missing/link")
+      let destination = URL(fileURLWithPath: "/root/target")
+
+      #expect(throws: InMemoryFileSystem.Error.directoryNotFound("/root/missing")) {
+        try fileSystem.createSymbolicLink(at: link, withDestinationURL: destination)
+      }
+    }
+
+    @Test func createSymbolicLinkFailsWhenPathExists() throws {
+      let directory = URL(fileURLWithPath: "/root/dir", isDirectory: true)
+      let link = directory.appendingPathComponent("link")
+      let destination = URL(fileURLWithPath: "/root/target")
+
+      try fileSystem.createDirectory(
+        at: directory,
+        withIntermediateDirectories: true,
+        attributes: nil
+      )
+      try fileSystem.write(Data("data".utf8), to: link)
+
+      #expect(throws: InMemoryFileSystem.Error.fileExists(link.path)) {
+        try fileSystem.createSymbolicLink(at: link, withDestinationURL: destination)
+      }
+    }
+
+    @Test func createSymbolicLinkToFileCanReadThroughLink() throws {
+      let directory = URL(fileURLWithPath: "/root/dir", isDirectory: true)
+      let target = directory.appendingPathComponent("target")
+      let link = directory.appendingPathComponent("link")
+
+      try fileSystem.createDirectory(
+        at: directory,
+        withIntermediateDirectories: true,
+        attributes: nil
+      )
+      try fileSystem.write(Data("payload".utf8), to: target)
+      try fileSystem.createSymbolicLink(at: link, withDestinationURL: target)
+
+      #expect(fileSystem.fileExists(atPath: link.path))
+      #expect(try String(decoding: fileSystem.data(at: link), as: UTF8.self) == "payload")
+      assertInlineSnapshot(of: fileSystem, as: .description) {
+        """
+        root/
+          dir/
+            link -> /root/dir/target
+            target "payload"
+        """
+      }
+    }
+
+    @Test func removeItemRemovesOnlySymbolicLink() throws {
+      let directory = URL(fileURLWithPath: "/root/dir", isDirectory: true)
+      let target = directory.appendingPathComponent("target")
+      let link = directory.appendingPathComponent("link")
+
+      try fileSystem.createDirectory(
+        at: directory,
+        withIntermediateDirectories: true,
+        attributes: nil
+      )
+      try fileSystem.write(Data("payload".utf8), to: target)
+      try fileSystem.createSymbolicLink(at: link, withDestinationURL: target)
+
+      try fileSystem.removeItem(at: link)
+
+      #expect(!fileSystem.fileExists(atPath: link.path))
+      #expect(fileSystem.fileExists(atPath: target.path))
+      assertInlineSnapshot(of: fileSystem, as: .description) {
+        """
+        root/
+          dir/
+            target "payload"
         """
       }
     }
