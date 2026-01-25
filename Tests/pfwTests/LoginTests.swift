@@ -41,18 +41,15 @@ extension BaseSuite {
             "http://localhost:8080/account/the-way/login?whoami=blob&machine=00000000-0000-0000-0000-000000000000&redirect=http://localhost:1234/callback"
         )!
       ])
-      #expect(
-        try String(
-          decoding: fileSystem.data(at: URL(filePath: "/Users/blob/.pfw/token")),
-          as: UTF8.self
-        ) == "deadbeef"
-      )
-      #expect(
-        try String(
-          decoding: fileSystem.data(at: URL(filePath: "/Users/blob/.pfw/machine")),
-          as: UTF8.self
-        ) == "00000000-0000-0000-0000-000000000000"
-      )
+      assertInlineSnapshot(of: fileSystem, as: .description) {
+        """
+        Users/
+          blob/
+            .pfw/
+              machine "00000000-0000-0000-0000-000000000000"
+              token "deadbeef"
+        """
+      }
     }
   }
 }

@@ -72,7 +72,7 @@ struct Install: AsyncParsableCommand {
       return
     }
 
-    let zipURL = URL.temporaryDirectory.appending(path: uuid().uuidString)
+    let zipURL = type(of: fileSystem).temporaryDirectory.appending(path: uuid().uuidString)
     try fileSystem.write(data, to: zipURL)
 
     let installURL = URL(fileURLWithPath: path ?? tool.defaultInstallPath.path)

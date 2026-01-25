@@ -5,6 +5,7 @@ import ZIPFoundation
 
 protocol FileSystem: Sendable {
   var homeDirectoryForCurrentUser: URL { get }
+  static var temporaryDirectory: URL { get }
   func createDirectory(
     at url: URL,
     withIntermediateDirectories createIntermediates: Bool,
@@ -45,6 +46,10 @@ extension FileSystem {
 }
 
 extension FileManager: FileSystem {
+  static var temporaryDirectory: URL {
+    URL.temporaryDirectory
+  }
+
   func write(_ data: Data, to url: URL) throws {
     try data.write(to: url)
   }
@@ -175,6 +180,10 @@ final class InMemoryFileSystem: FileSystem {
     state.withValue { $0.homeDirectoryForCurrentUser }
   }
 
+  static var temporaryDirectory: URL {
+    URL(fileURLWithPath: "/tmp", isDirectory: true)
+  }
+
   func write(_ data: Data, to url: URL) throws {
     let path = normalize(url)
     let directory = normalize(url.deletingLastPathComponent())
@@ -266,7 +275,7 @@ private func render(node: FileNode, into lines: inout [String], indent: String) 
 }
 
 private func fileSummary(data: Data) -> String {
-  if data.count < 20, let string = String(data: data, encoding: .utf8) {
+  if data.count < 50, let string = String(data: data, encoding: .utf8) {
     let sanitized = string
       .replacingOccurrences(of: "\n", with: "\\n")
       .replacingOccurrences(of: "\r", with: "\\r")

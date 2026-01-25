@@ -8,35 +8,40 @@ import Testing
 @testable import pfw
 
 extension BaseSuite {
-  @Suite struct LogoutTests {
+  @Suite(
+    .dependencies {
+      $0.auth = InMemoryAuth(
+        redirectURL: URL(string: "http://localhost:1234/callback"),
+        token: "deadbeef"
+      )
+    }
+  )
+  struct LogoutTests {
     @Dependency(\.fileSystem) var fileSystem
     var inMemoryFileSystem: InMemoryFileSystem {
       fileSystem as! InMemoryFileSystem
     }
 
     @Test(
-      .dependencies {
-        $0.auth = InMemoryAuth(
-          redirectURL: URL(string: "http://localhost:1234/callback"),
-          token: "deadbeef"
-        )
+      .dependencies { _ in 
+        var command = try #require(try PFW.parseAsRoot(["login"]) as? AsyncParsableCommand)
+        try await command.run()
       }
     )
     func logout() async throws {
-      var command = try #require(try PFW.parseAsRoot(["login"]) as? AsyncParsableCommand)
-      try await command.run()
-
       try await assertCommand(["logout"]) {
         """
         Removed token at /Users/blob/.pfw/token.
         """
       }
-      #expect(
-        try String(
-          decoding: fileSystem.data(at: URL(filePath: "/Users/blob/.pfw/machine")),
-          as: UTF8.self
-        ) == "00000000-0000-0000-0000-000000000000"
-      )
+      assertInlineSnapshot(of: fileSystem, as: .description) {
+        """
+        Users/
+          blob/
+            .pfw/
+              machine (36 bytes)
+        """
+      }
     }
 
     @Test
