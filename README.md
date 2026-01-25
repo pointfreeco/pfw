@@ -61,6 +61,7 @@ A CLI tool for downloading and managing [Point-Free Way](https://www.pointfree.c
     | Codex | `~/.codex/skills` | `.codex/skills` |
     | Claude | `~/.claude/skills` | `.claude/skills` |
     | Cursor | `~/.cursor/skills` | `.cursor/skills` |
+    | Copilot | `~/.copilot/skills` | `.github/skills` |
     | Kiro | `~/.kiro/skills` | `.kiro/skills` |
     | Gemini | `~/.gemini/skills` | `.gemini/skills` |
     | Anti-Gravity | `~/.gemini/antigravity/global_skills` | `.agent/skills` |

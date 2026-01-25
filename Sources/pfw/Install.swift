@@ -15,6 +15,7 @@ struct Install: AsyncParsableCommand {
     case codex
     case claude
     case cursor
+    case copilot
     case kiro
     case gemini
     case antigravity
@@ -23,6 +24,8 @@ struct Install: AsyncParsableCommand {
       if workspace {
         // Workspace-specific paths
         switch self {
+        case .copilot:
+          return URL(filePath: ".github/skills")
         case .antigravity:
           return URL(filePath: ".agent/skills")
         default:

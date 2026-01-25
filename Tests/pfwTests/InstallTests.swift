@@ -155,6 +155,19 @@ struct ToolSymlinkPathsTests {
     #expect(url.path.hasPrefix("/"))
   }
 
+  @Test("Copilot global symlink path")
+  func copilotGlobalPath() {
+    let url = Install.Tool.copilot.symlinkPath(workspace: false)
+    #expect(url.path.contains(".copilot/skills"))
+    #expect(url.path.hasPrefix("/"))
+  }
+
+  @Test("Copilot workspace symlink path")
+  func copilotWorkspacePath() {
+    let url = Install.Tool.copilot.symlinkPath(workspace: true)
+    #expect(url.path.hasSuffix(".github/skills"))
+  }
+
   @Test("Kiro global symlink path")
   func kiroGlobalPath() {
     let url = Install.Tool.kiro.symlinkPath(workspace: false)
