@@ -135,14 +135,14 @@ struct ToolSymlinkPathsTests {
     #expect(url.path.hasSuffix(".claude/skills"))
   }
 
-  @Test("Anti-Gravity global symlink path")
+  @Test("Antigravity global symlink path")
   func antigravityGlobalPath() {
     let url = Install.Tool.antigravity.symlinkPath(workspace: false)
     #expect(url.path.contains(".gemini/antigravity/global_skills"))
     #expect(url.path.hasPrefix("/"))
   }
 
-  @Test("Anti-Gravity workspace symlink path")
+  @Test("Antigravity workspace symlink path")
   func antigravityWorkspacePath() {
     let url = Install.Tool.antigravity.symlinkPath(workspace: true)
     #expect(url.path.hasSuffix(".agent/skills"))

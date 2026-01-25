@@ -58,12 +58,12 @@ A CLI tool for downloading and managing [Point-Free Way](https://www.pointfree.c
 
     | Tool | Global (user-level) | Workspace (project-level) |
     |------|---------------------|---------------------------|
-    | Codex | `~/.codex/skills` | `.codex/skills` |
-    | Claude | `~/.claude/skills` | `.claude/skills` |
-    | Cursor | `~/.cursor/skills` | `.cursor/skills` |
-    | Copilot | `~/.copilot/skills` | `.github/skills` |
+    | [Codex](https://developers.openai.com/codex/skills/) | `~/.codex/skills` | `.codex/skills` |
+    | [Claude](https://code.claude.com/docs/en/skills) | `~/.claude/skills` | `.claude/skills` |
+    | [Cursor](https://cursor.com/docs/context/skills) | `~/.cursor/skills` | `.cursor/skills` |
+    | [Copilot](https://docs.github.com/en/copilot/concepts/agents/about-agent-skills) | `~/.copilot/skills` | `.github/skills` |
     | Kiro | `~/.kiro/skills` | `.kiro/skills` |
-    | Gemini | `~/.gemini/skills` | `.gemini/skills` |
-    | Anti-Gravity | `~/.gemini/antigravity/global_skills` | `.agent/skills` |
+    | [Gemini](https://geminicli.com/docs/cli/skills/) | `~/.gemini/skills` | `.gemini/skills` |
+    | [Antigravity](https://antigravity.google/docs/skills) | `~/.gemini/antigravity/global_skills` | `.agent/skills` |
 
     All symlinks point to either `~/.pfw/skills/` (global) or `.pfw/skills/` (local).
