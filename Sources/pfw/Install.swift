@@ -284,14 +284,54 @@ struct Install: AsyncParsableCommand {
       print("Skills stored in \(storageLocation)")
       print("Creating \(symlinkLocation) symlinks for selected AI tools...")
 
+      let fileManager = FileManager.default
+
       for tool in selectedTools {
-        let symlinkPath = tool.symlinkPath(workspace: useWorkspace)
+        let toolSkillsDir = tool.symlinkPath(workspace: useWorkspace)
+        let expandedToolSkillsDir = URL(fileURLWithPath: NSString(string: toolSkillsDir.path).expandingTildeInPath)
+
         do {
-          try Self.createSymlink(from: symlinkPath, to: installURL)
-          let arrow = local ? "→ .pfw/skills" : "→ ~/.pfw/skills"
-          print("✓ \(tool.rawValue): \(symlinkPath.path) \(arrow)")
+          // Create the tool's skills directory if it doesn't exist
+          try fileManager.createDirectory(atPath: expandedToolSkillsDir.path, withIntermediateDirectories: true)
+
+          // Get all skill folders from .pfw/skills
+          let skillFolders = try fileManager.contentsOfDirectory(atPath: expandedInstallURL.path)
+
+          for skill in skillFolders {
+            let skillPath = expandedInstallURL.appendingPathComponent(skill).path
+
+            // Skip if skillPath is not a directory (e.g., .DS_Store)
+            var isDirectory: ObjCBool = false
+            if fileManager.fileExists(atPath: skillPath) {
+              fileManager.fileExists(atPath: skillPath, isDirectory: &isDirectory)
+            }
+
+            guard isDirectory.boolValue else { continue }
+
+            let symlinkPath = expandedToolSkillsDir.appendingPathComponent(skill).path
+            let targetPath = skillPath
+            let symlinkURL = URL(fileURLWithPath: symlinkPath)
+            let targetURL = URL(fileURLWithPath: targetPath)
+
+            do {
+              // Remove existing symlink or directory if present
+              if fileManager.fileExists(atPath: symlinkPath) {
+                try fileManager.removeItem(atPath: symlinkPath)
+              }
+              // Create individual skill symlink
+              try fileManager.createSymbolicLink(at: symlinkURL, withDestinationURL: targetURL)
+            } catch {
+              print("✗ \(tool.rawValue)/\(skill): Failed to create symlink - \(error.localizedDescription)")
+              failedSymlinks.append(tool)
+            }
+          }
+
+          if !failedSymlinks.contains(tool) {
+            let arrow = local ? "→ .pfw/skills/{...}" : "→ ~/.pfw/skills/{...}"
+            print("✓ \(tool.rawValue): \(toolSkillsDir.path) \(arrow)")
+          }
         } catch {
-          print("✗ \(tool.rawValue): Failed to create symlink - \(error.localizedDescription)")
+          print("✗ \(tool.rawValue): Failed to create skills directory - \(error.localizedDescription)")
           failedSymlinks.append(tool)
         }
       }
