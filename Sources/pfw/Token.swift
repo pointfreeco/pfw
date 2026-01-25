@@ -4,6 +4,7 @@ import Foundation
 
 func machine() throws -> UUID {
   @Dependency(\.fileSystem) var fileSystem
+  @Dependency(\.uuid) var uuid
   try fileSystem.createDirectory(at: pfwDirectoryURL, withIntermediateDirectories: true)
   if let currentMachineData = try? Data(contentsOf: machineURL),
     let currentMachine = UUID(uuidString: String(decoding: currentMachineData, as: UTF8.self))
@@ -11,7 +12,7 @@ func machine() throws -> UUID {
     return currentMachine
   } else {
     try? fileSystem.removeItem(at: machineURL)
-    let newMachine = UUID()
+    let newMachine = uuid()
     try fileSystem.write(Data(newMachine.uuidString.utf8), to: machineURL)
     return newMachine
   }

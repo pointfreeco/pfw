@@ -39,6 +39,7 @@ struct Install: AsyncParsableCommand {
   }
 
   private func install(shouldRetryAfterLogin: Bool) async throws {
+    @Dependency(\.uuid) var uuid
     let token = try loadToken()
     let machine = try machine()
     let whoami = whoAmI()
@@ -69,7 +70,7 @@ struct Install: AsyncParsableCommand {
       return
     }
 
-    let zipURL = URL.temporaryDirectory.appending(path: UUID().uuidString)
+    let zipURL = URL.temporaryDirectory.appending(path: uuid().uuidString)
     try data.write(to: zipURL)
 
     let installURL = URL(fileURLWithPath: path ?? tool.defaultInstallPath.path)
