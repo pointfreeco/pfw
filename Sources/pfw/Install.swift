@@ -12,12 +12,12 @@ struct Install: AsyncParsableCommand {
   )
 
   enum Tool: String, CaseIterable, ExpressibleByArgument {
-    case cursor
     case codex
     case claude
-    case antigravity
+    case cursor
     case kiro
     case gemini
+    case antigravity
 
     func symlinkPath(workspace: Bool) -> URL {
       if workspace {
@@ -108,8 +108,8 @@ struct Install: AsyncParsableCommand {
 
     guard let input = readLine()?.trimmingCharacters(in: .whitespaces),
           !input.isEmpty else {
-      print("No selection made. Defaulting to Cursor.")
-      return [.cursor]
+      print("No selection made. Defaulting to Codex.")
+      return [.codex]
     }
 
     let selections = input.split(separator: " ").compactMap { Int($0) }
@@ -123,7 +123,7 @@ struct Install: AsyncParsableCommand {
       return Tool.allCases[index - 1]
     }
 
-    return selectedTools.isEmpty ? [.cursor] : selectedTools
+    return selectedTools.isEmpty ? [.codex] : selectedTools
   }
 
   static func createSymlink(from symlinkPath: URL, to targetPath: URL) throws {

@@ -58,9 +58,9 @@ A CLI tool for downloading and managing [Point-Free Way](https://www.pointfree.c
 
     | Tool | Global (user-level) | Workspace (project-level) |
     |------|---------------------|---------------------------|
-    | Cursor | `~/.cursor/skills` | `.cursor/skills` |
-    | Claude | `~/.claude/skills` | `.claude/skills` |
     | Codex | `~/.codex/skills` | `.codex/skills` |
+    | Claude | `~/.claude/skills` | `.claude/skills` |
+    | Cursor | `~/.cursor/skills` | `.cursor/skills` |
     | Kiro | `~/.kiro/skills` | `.kiro/skills` |
     | Gemini | `~/.gemini/skills` | `.gemini/skills` |
     | Anti-Gravity | `~/.gemini/antigravity/global_skills` | `.agent/skills` |

@@ -65,9 +65,9 @@ fastlane/test_output
 .vscode/
 
 # Point-Free Way workspace symlinks (uncomment if using --workspace or --local)
-# .cursor/skills/    # Cursor workspace
-# .claude/skills/    # Claude workspace
 # .codex/skills/     # Codex workspace
+# .claude/skills/    # Claude workspace
+# .cursor/skills/    # Cursor workspace
 # .kiro/skills/      # Kiro workspace
 # .gemini/skills/    # Gemini workspace
 # .agent/skills/     # Anti-Gravity workspace
