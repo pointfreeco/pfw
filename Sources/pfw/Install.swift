@@ -34,6 +34,29 @@ struct Install: AsyncParsableCommand {
     try await install(shouldRetryAfterLogin: true)
   }
 
+  // MARK: - Testable Helper Functions
+
+  static func isCurrentDirectoryPath(_ path: String?) -> Bool {
+    path == "." || path == "current"
+  }
+
+  static func validateInstallPath(_ installPath: String, tool: Tool) -> Bool {
+    let expectedPattern = ".\(tool.rawValue)/skills"
+    return installPath.contains(expectedPattern)
+  }
+
+  static func resolveInstallURL(
+    path: String?,
+    tool: Tool,
+    currentDirectory: String = FileManager.default.currentDirectoryPath
+  ) -> URL {
+    if isCurrentDirectoryPath(path) {
+      return URL(fileURLWithPath: currentDirectory)
+    } else {
+      return URL(fileURLWithPath: path ?? tool.defaultInstallPath.path)
+    }
+  }
+
   private func install(shouldRetryAfterLogin: Bool) async throws {
     let token = try loadToken()
     let machine = try machine()
@@ -69,21 +92,14 @@ struct Install: AsyncParsableCommand {
     try data.write(to: zipURL)
 
     // Determine if installing to current directory
-    let isCurrentDirectory = path == "." || path == "current"
-    let installURL: URL
-
-    if isCurrentDirectory {
-      installURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
-    } else {
-      installURL = URL(fileURLWithPath: path ?? tool.defaultInstallPath.path)
-    }
+    let isCurrentDirectory = Self.isCurrentDirectoryPath(path)
+    let installURL = Self.resolveInstallURL(path: path, tool: tool)
 
     // Verify the install path is in the expected location (only if custom path provided)
     if path != nil {
       let installPath = installURL.path
-      let expectedPattern = ".\(tool.rawValue)/skills"
 
-      guard installPath.contains(expectedPattern) else {
+      guard Self.validateInstallPath(installPath, tool: tool) else {
         print("Error: Install path is not in the expected location.")
         print("")
         print("The install path must contain '.\(tool.rawValue)/skills' in it.")

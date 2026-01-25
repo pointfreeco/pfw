@@ -18,6 +18,10 @@ let package = Package(
         .product(name: "ArgumentParser", package: "swift-argument-parser"),
         .product(name: "ZIPFoundation", package: "ZIPFoundation")
       ]
+    ),
+    .testTarget(
+      name: "pfwTests",
+      dependencies: ["pfw"]
     )
   ],
   swiftLanguageModes: [.v6]
