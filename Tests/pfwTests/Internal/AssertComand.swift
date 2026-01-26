@@ -6,7 +6,7 @@ import Testing
 @testable import pfw
 
 #if canImport(Darwin)
-  @preconcurrency import Darwin
+  import Darwin
 #else
   @preconcurrency import Glibc
 #endif
