@@ -2,6 +2,7 @@ import ConcurrencyExtras
 import CustomDump
 import Foundation
 import Testing
+
 @testable import pfw
 
 final class MockOpenInBrowser: OpenInBrowser, @unchecked Sendable {

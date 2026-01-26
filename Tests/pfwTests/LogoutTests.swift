@@ -19,7 +19,7 @@ extension BaseSuite {
     @Dependency(\.fileSystem, as: InMemoryFileSystem.self) var fileSystem
 
     @Test(
-      .dependencies { 
+      .dependencies {
         try await $0.login()
       }
     )

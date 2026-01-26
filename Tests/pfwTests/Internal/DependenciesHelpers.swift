@@ -23,10 +23,10 @@ extension Dependency {
   ) {
     self.init(
       \.[keyPath, as: HashableType(type)],
-       fileID: fileID,
-       filePath: filePath,
-       line: line,
-       column: column
+      fileID: fileID,
+      filePath: filePath,
+      line: line,
+      column: column
     )
   }
 }

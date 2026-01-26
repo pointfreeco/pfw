@@ -3,23 +3,24 @@ import Foundation
 import InlineSnapshotTesting
 import Testing
 
+@testable import pfw
+
 #if canImport(Darwin)
   @preconcurrency import Darwin
 #else
   @preconcurrency import Glibc
 #endif
 
-@testable import pfw
-
 nonisolated(nonsending)
-func assertCommand(
-  _ arguments: [String],
-  stdout expected: (() -> String)? = nil,
-  fileID: StaticString = #fileID,
-  file: StaticString = #filePath,
-  line: UInt = #line,
-  column: UInt = #column
-) async throws {
+  func assertCommand(
+    _ arguments: [String],
+    stdout expected: (() -> String)? = nil,
+    fileID: StaticString = #fileID,
+    file: StaticString = #filePath,
+    line: UInt = #line,
+    column: UInt = #column
+  ) async throws
+{
   let output = try await withCapturedStdout {
     var command = try PFW.parseAsRoot(arguments)
     if var command = command as? AsyncParsableCommand {
@@ -40,14 +41,15 @@ func assertCommand(
 }
 
 nonisolated(nonsending)
-func assertCommandThrows(
-  _ arguments: [String],
-  error: (() -> String)? = nil,
-  fileID: StaticString = #fileID,
-  file: StaticString = #filePath,
-  line: UInt = #line,
-  column: UInt = #column
-) async {
+  func assertCommandThrows(
+    _ arguments: [String],
+    error: (() -> String)? = nil,
+    fileID: StaticString = #fileID,
+    file: StaticString = #filePath,
+    line: UInt = #line,
+    column: UInt = #column
+  ) async
+{
   var thrownError: Error?
   do {
     var command = try PFW.parseAsRoot(arguments)

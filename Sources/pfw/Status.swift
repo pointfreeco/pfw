@@ -9,7 +9,7 @@ struct Status: ParsableCommand {
 
   func run() throws {
     @Dependency(\.fileSystem) var fileSystem
-    
+
     let tokenExists = fileSystem.fileExists(atPath: tokenURL.path)
     let dataExists = fileSystem.fileExists(atPath: pfwDirectoryURL.path)
 

@@ -23,7 +23,7 @@ let package = Package(
         .product(name: "ConcurrencyExtras", package: "swift-concurrency-extras"),
         .product(name: "CustomDump", package: "swift-custom-dump"),
         .product(name: "Dependencies", package: "swift-dependencies"),
-        .product(name: "ZIPFoundation", package: "ZIPFoundation")
+        .product(name: "ZIPFoundation", package: "ZIPFoundation"),
       ]
     ),
     .testTarget(
@@ -34,9 +34,9 @@ let package = Package(
         .product(name: "Dependencies", package: "swift-dependencies"),
         .product(name: "DependenciesTestSupport", package: "swift-dependencies"),
         .product(name: "InlineSnapshotTesting", package: "swift-snapshot-testing"),
-        "pfw"
+        "pfw",
       ]
-    )
+    ),
   ],
   swiftLanguageModes: [.v6]
 )

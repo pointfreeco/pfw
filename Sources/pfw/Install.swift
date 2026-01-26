@@ -56,7 +56,7 @@ struct Install: AsyncParsableCommand {
       )
     } catch let error as PointFreeServerError {
       switch error {
-      case let .notLoggedIn(message):
+      case .notLoggedIn(let message):
         guard shouldRetryAfterLogin else {
           if let message, !message.isEmpty {
             print(message)
@@ -68,7 +68,7 @@ struct Install: AsyncParsableCommand {
         print("Login complete. Retrying install...")
         try await install(shouldRetryAfterLogin: false)
         return
-      case let .serverError(message):
+      case .serverError(let message):
         if let message, !message.isEmpty {
           print(message)
         }

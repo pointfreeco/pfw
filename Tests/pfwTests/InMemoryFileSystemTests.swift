@@ -1,8 +1,9 @@
-import InlineSnapshotTesting
 import Dependencies
 import DependenciesTestSupport
 import Foundation
+import InlineSnapshotTesting
 import Testing
+
 @testable import pfw
 
 extension BaseSuite {
