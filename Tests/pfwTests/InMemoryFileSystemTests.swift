@@ -310,9 +310,29 @@ extension BaseSuite {
       let root = URL(fileURLWithPath: "/root", isDirectory: true)
       let directory = URL(fileURLWithPath: "/root/dir", isDirectory: true)
       let file = URL(fileURLWithPath: "/root/file.txt")
+      let linkToFile = URL(fileURLWithPath: "/root/link-file")
+      let linkTargetDirectory = URL(fileURLWithPath: "/root/linked", isDirectory: true)
+      let linkToDirectory = URL(fileURLWithPath: "/root/link-dir")
+      let linkTargetFile = linkTargetDirectory.appendingPathComponent("inner.txt")
 
       try fileSystem.createDirectory(at: directory, withIntermediateDirectories: true)
       try fileSystem.write(Data("data".utf8), to: file)
+      try fileSystem.createDirectory(at: linkTargetDirectory, withIntermediateDirectories: true)
+      try fileSystem.write(Data("payload".utf8), to: linkTargetFile)
+      try fileSystem.createSymbolicLink(at: linkToFile, withDestinationURL: file)
+      try fileSystem.createSymbolicLink(at: linkToDirectory, withDestinationURL: linkTargetDirectory)
+      assertInlineSnapshot(of: fileSystem, as: .description) {
+        """
+        root/
+          dir/
+          file.txt "data"
+          link-dir@ -> /root/linked
+          link-file@ -> /root/file.txt
+          linked/
+            inner.txt "payload"
+        tmp/
+        """
+      }
 
       expectNoDifference(
         try fileSystem
@@ -321,6 +341,9 @@ extension BaseSuite {
         [
           URL(fileURLWithPath: "/root/dir"),
           URL(fileURLWithPath: "/root/file.txt"),
+          URL(fileURLWithPath: "/root/link-dir"),
+          URL(fileURLWithPath: "/root/link-file"),
+          URL(fileURLWithPath: "/root/linked"),
         ]
       )
     }
