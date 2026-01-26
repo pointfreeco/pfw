@@ -64,7 +64,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "--version"
+            argument = "install --tool codex"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
