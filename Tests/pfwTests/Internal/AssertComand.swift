@@ -11,16 +11,14 @@ import Testing
   @preconcurrency import Glibc
 #endif
 
-nonisolated(nonsending)
-  func assertCommand(
-    _ arguments: [String],
-    stdout expected: (() -> String)? = nil,
-    fileID: StaticString = #fileID,
-    file: StaticString = #filePath,
-    line: UInt = #line,
-    column: UInt = #column
-  ) async throws
-{
+func assertCommand(
+  _ arguments: [String],
+  stdout expected: (() -> String)? = nil,
+  fileID: StaticString = #fileID,
+  file: StaticString = #filePath,
+  line: UInt = #line,
+  column: UInt = #column
+) async throws {
   let output = try await withCapturedStdout {
     var command = try PFW.parseAsRoot(arguments)
     if var command = command as? AsyncParsableCommand {
@@ -40,16 +38,14 @@ nonisolated(nonsending)
   )
 }
 
-nonisolated(nonsending)
-  func assertCommandThrows(
-    _ arguments: [String],
-    error: (() -> String)? = nil,
-    fileID: StaticString = #fileID,
-    file: StaticString = #filePath,
-    line: UInt = #line,
-    column: UInt = #column
-  ) async
-{
+func assertCommandThrows(
+  _ arguments: [String],
+  error: (() -> String)? = nil,
+  fileID: StaticString = #fileID,
+  file: StaticString = #filePath,
+  line: UInt = #line,
+  column: UInt = #column
+) async {
   var thrownError: Error?
   do {
     var command = try PFW.parseAsRoot(arguments)
@@ -88,8 +84,9 @@ nonisolated(nonsending)
 }
 
 // TODO: Explore a dependency alternative to this.
-@MainActor
-private func withCapturedStdout(_ body: () async throws -> Void) async rethrows -> String {
+private func withCapturedStdout(
+  _ body: () async throws -> Void
+) async rethrows -> String {
   let pipe = Pipe()
   let original = dup(STDOUT_FILENO)
   fflush(nil)

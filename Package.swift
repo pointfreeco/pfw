@@ -24,6 +24,9 @@ let package = Package(
         .product(name: "CustomDump", package: "swift-custom-dump"),
         .product(name: "Dependencies", package: "swift-dependencies"),
         .product(name: "ZIPFoundation", package: "ZIPFoundation"),
+      ],
+      swiftSettings: [
+        .enableUpcomingFeature("NonisolatedNonsendingByDefault")
       ]
     ),
     .testTarget(
@@ -35,6 +38,9 @@ let package = Package(
         .product(name: "DependenciesTestSupport", package: "swift-dependencies"),
         .product(name: "InlineSnapshotTesting", package: "swift-snapshot-testing"),
         "pfw",
+      ],
+      swiftSettings: [
+        .enableUpcomingFeature("NonisolatedNonsendingByDefault")
       ]
     ),
   ],
