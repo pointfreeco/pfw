@@ -349,8 +349,8 @@ private func fileSummary(data: Data) -> String {
 }
 
 enum FileSystemKey: DependencyKey {
-  static let liveValue: any FileSystem = FileManager.default
-  static let testValue: any FileSystem = InMemoryFileSystem()
+  static var liveValue: any FileSystem { FileManager.default }
+  static var testValue: any FileSystem { InMemoryFileSystem() }
 }
 
 extension DependencyValues {

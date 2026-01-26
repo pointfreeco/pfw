@@ -3,7 +3,7 @@ import Testing
 @testable import pfw
 
 extension BaseSuite {
-  @Suite struct StatusTests {
+  @Suite @MainActor struct StatusTests {
     @Test func basics() async throws {
       try await assertCommand(["status"]) {
         """

@@ -16,7 +16,7 @@ extension BaseSuite {
       )
     }
   )
-  struct InstallTests {
+  @MainActor struct InstallTests {
     @Dependency(\.fileSystem, as: InMemoryFileSystem.self) var fileSystem
 
     @Test func noToolSpecified() async throws {
@@ -111,7 +111,7 @@ extension BaseSuite {
         )
       }
     )
-    struct LoggedIn {
+    @MainActor struct LoggedIn {
       @Dependency(\.fileSystem, as: InMemoryFileSystem.self) var fileSystem
 
       @Test func codex() async throws {

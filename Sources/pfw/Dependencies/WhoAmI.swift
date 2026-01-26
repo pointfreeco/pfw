@@ -43,8 +43,8 @@ struct TestWhoAmI: WhoAmI {
 }
 
 enum WhoAmIKey: DependencyKey {
-  static let liveValue: any WhoAmI = LiveWhoAmI()
-  static let testValue: any WhoAmI = TestWhoAmI()
+  static var liveValue: any WhoAmI { LiveWhoAmI() }
+  static var testValue: any WhoAmI { TestWhoAmI() }
 }
 
 extension DependencyValues {

@@ -61,8 +61,8 @@ final class MockOpenInBrowser: OpenInBrowser, @unchecked Sendable {
 }
 
 enum OpenInBrowserKey: DependencyKey {
-  static let liveValue: any OpenInBrowser = LiveOpenInBrowser()
-  static let testValue: any OpenInBrowser = MockOpenInBrowser()
+  static var liveValue: any OpenInBrowser { LiveOpenInBrowser() }
+  static var testValue: any OpenInBrowser { MockOpenInBrowser() }
 }
 
 extension DependencyValues {

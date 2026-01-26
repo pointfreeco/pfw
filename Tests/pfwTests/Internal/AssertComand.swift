@@ -6,6 +6,7 @@ import Testing
 
 @testable import pfw
 
+nonisolated(nonsending)
 func assertCommand(
   _ arguments: [String],
   stdout expected: (() -> String)? = nil,
@@ -33,6 +34,7 @@ func assertCommand(
   )
 }
 
+nonisolated(nonsending)
 func assertCommandThrows(
   _ arguments: [String],
   error: (() -> String)? = nil,
@@ -78,6 +80,7 @@ func assertCommandThrows(
   )
 }
 
+// TODO: Explore a dependency alternative to this.
 func withCapturedStdout(_ body: () async throws -> Void) async rethrows -> String {
   let pipe = Pipe()
   let original = dup(STDOUT_FILENO)

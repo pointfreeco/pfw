@@ -7,7 +7,7 @@ import Testing
 @testable import pfw
 
 extension BaseSuite {
-  @Suite struct LoginTests {
+  @Suite @MainActor struct LoginTests {
     @Dependency(\.fileSystem, as: InMemoryFileSystem.self) var fileSystem
     @Dependency(\.openInBrowser, as: MockOpenInBrowser.self) var openInBrowser
 
@@ -42,6 +42,7 @@ extension BaseSuite {
             .pfw/
               machine "00000000-0000-0000-0000-000000000000"
               token "deadbeef"
+        tmp/
         """
       }
     }

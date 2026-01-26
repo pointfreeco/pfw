@@ -43,9 +43,9 @@ struct InMemoryAuth: Auth {
 
   enum AuthKey: DependencyKey {
 #if canImport(Network)
-    static let liveValue: any Auth = try! LocalAuthServer()
+    static var liveValue: any Auth { try! LocalAuthServer() }
 #endif
-    static let testValue: any Auth = InMemoryAuth()
+    static var testValue: any Auth { InMemoryAuth() }
   }
 
 extension DependencyValues {

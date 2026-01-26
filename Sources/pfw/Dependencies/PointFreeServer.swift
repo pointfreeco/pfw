@@ -54,8 +54,10 @@ struct InMemoryPointFreeServer: PointFreeServer {
 }
 
 enum PointFreeServerKey: DependencyKey {
-  static let liveValue: any PointFreeServer = LivePointFreeServer()
-  static let testValue: any PointFreeServer = InMemoryPointFreeServer(result: .failure(.invalidResponse))
+  static var liveValue: any PointFreeServer { LivePointFreeServer() }
+  static var testValue: any PointFreeServer {
+    InMemoryPointFreeServer(result: .failure(.invalidResponse))
+  }
 }
 
 extension DependencyValues {

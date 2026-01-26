@@ -6,6 +6,7 @@ import Testing
 @testable import pfw
 
 extension BaseSuite {
+  @MainActor
   @Suite(
     .dependencies {
       $0.fileSystem = InMemoryFileSystem(homeDirectoryForCurrentUser: URL(fileURLWithPath: "/root"))
@@ -43,6 +44,7 @@ extension BaseSuite {
         root/
           a/
             b/
+        tmp/
         """
       }
     }
@@ -98,6 +100,7 @@ extension BaseSuite {
       assertInlineSnapshot(of: fileSystem, as: .description) {
         """
         root/
+        tmp/
         """
       }
     }
@@ -163,6 +166,7 @@ extension BaseSuite {
         root/
           dir/
             file "data"
+        tmp/
         """
       }
     }
@@ -214,6 +218,7 @@ extension BaseSuite {
           dir/
             link -> /root/dir/target
             target "payload"
+        tmp/
         """
       }
     }
@@ -240,6 +245,7 @@ extension BaseSuite {
         root/
           dir/
             target "payload"
+        tmp/
         """
       }
     }
@@ -276,6 +282,7 @@ extension BaseSuite {
             a.txt "alpha"
             nested/
               b.txt "beta"
+        tmp/
         """
       }
     }
