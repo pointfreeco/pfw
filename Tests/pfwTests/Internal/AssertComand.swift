@@ -96,19 +96,3 @@ func withCapturedStdout(_ body: () async throws -> Void) async rethrows -> Strin
   let data = pipe.fileHandleForReading.readDataToEndOfFile()
   return String(data: data, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
 }
-
-func withCapturedStderr(_ body: () async throws -> Void) async rethrows -> String {
-  let pipe = Pipe()
-  let original = dup(STDERR_FILENO)
-  fflush(stderr)
-  dup2(pipe.fileHandleForWriting.fileDescriptor, STDERR_FILENO)
-
-  try await body()
-
-  fflush(stderr)
-  dup2(original, STDERR_FILENO)
-  close(original)
-  pipe.fileHandleForWriting.closeFile()
-  let data = pipe.fileHandleForReading.readDataToEndOfFile()
-  return String(data: data, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-}
