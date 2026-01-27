@@ -29,6 +29,9 @@ struct Install: AsyncParsableCommand {
   @Option(help: "Directory to install skills into.")
   var path: String?
 
+  @Flag(help: "Ignore the local SHA and always download.")
+  var force = false
+
   func validate() throws {
     guard (tool != nil) != (path != nil) else {
       throw ValidationError("Provide either --tool or --path.")
@@ -47,7 +50,7 @@ struct Install: AsyncParsableCommand {
 
     let token = try loadToken()
     let machine = try machine()
-    let sha = loadSHA()
+    let sha = force ? nil : loadSHA()
     let data: Data
     do {
       let response = try await pointFreeServer.downloadSkills(
