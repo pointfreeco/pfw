@@ -47,13 +47,23 @@ struct Install: AsyncParsableCommand {
 
     let token = try loadToken()
     let machine = try machine()
+    let sha = loadSHA()
     let data: Data
     do {
-      data = try await pointFreeServer.downloadSkills(
+      let response = try await pointFreeServer.downloadSkills(
         token: token,
         machine: machine,
-        whoami: whoAmI()
+        whoami: whoAmI(),
+        sha: sha
       )
+      switch response {
+      case let .data(downloadedData, etag: etag):
+        data = downloadedData
+        try save(sha: etag)
+      case .notModified:
+        print("Skills already up to date.")
+        return
+      }
     } catch let error as PointFreeServerError {
       switch error {
       case .notLoggedIn(let message):
@@ -72,6 +82,9 @@ struct Install: AsyncParsableCommand {
         if let message, !message.isEmpty {
           print(message)
         }
+        return
+      case .missingEtag:
+        print("Server response error. Contact support@pointfree.co if problem persists.")
         return
       case .invalidResponse:
         print("Unexpected response from server.")

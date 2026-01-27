@@ -5,17 +5,22 @@ import Foundation
 
 actor InMemoryPointFreeServer: PointFreeServer {
   @Dependency(\.continuousClock) var clock
-  var results: [Result<Data, PointFreeServerError>] = []
+  var results: [Result<DownloadSkillsResponse, PointFreeServerError>] = []
 
-  init(results: [Result<Data, PointFreeServerError>]) {
+  init(results: [Result<DownloadSkillsResponse, PointFreeServerError>]) {
     self.results = results
   }
 
-  init(result: Result<Data, PointFreeServerError>) {
+  init(result: Result<DownloadSkillsResponse, PointFreeServerError>) {
     self.results = [result]
   }
 
-  func downloadSkills(token: String, machine: UUID, whoami: String) async throws -> Data {
+  func downloadSkills(
+    token: String,
+    machine: UUID,
+    whoami: String,
+    sha: String?
+  ) async throws -> DownloadSkillsResponse {
     guard !results.isEmpty
     else {
       throw PointFreeServerError.invalidResponse

@@ -26,6 +26,7 @@ var pfwDirectoryURL: URL {
 
 let machineURL = pfwDirectoryURL.appendingPathComponent("machine")
 let tokenURL = pfwDirectoryURL.appendingPathComponent("token")
+let shaURL = pfwDirectoryURL.appendingPathComponent("sha")
 
 func save(token: String) throws {
   @Dependency(\.fileSystem) var fileSystem
@@ -42,4 +43,23 @@ func loadToken() throws -> String {
     throw ValidationError("No token found. Run `pfw login` first.")
   }
   return try String(decoding: fileSystem.data(at: tokenURL), as: UTF8.self)
+}
+
+func loadSHA() -> String? {
+  @Dependency(\.fileSystem) var fileSystem
+  guard let data = try? fileSystem.data(at: shaURL)
+  else {
+    return nil
+  }
+  return String(decoding: data, as: UTF8.self)
+    .trimmingCharacters(in: .whitespacesAndNewlines)
+}
+
+func save(sha: String) throws {
+  @Dependency(\.fileSystem) var fileSystem
+  try fileSystem.createDirectory(at: pfwDirectoryURL, withIntermediateDirectories: true)
+  try fileSystem.write(
+    Data(sha.trimmingCharacters(in: .whitespacesAndNewlines).utf8),
+    to: shaURL
+  )
 }
