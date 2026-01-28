@@ -25,21 +25,25 @@ struct Install: AsyncParsableCommand {
 
       switch self {
       case .antigravity:
-        return home
+        return
+          home
           .appending(path: ".gemini")
           .appending(path: "antigravity")
           .appending(path: "global_skills")
       case .opencode:
-        return home
+        return
+          home
           .appending(path: ".config")
           .appending(path: "opencode")
           .appending(path: "skills")
       case .droid:
-        return home
+        return
+          home
           .appending(path: ".factory")
           .appending(path: "skills")
       default:
-        return home
+        return
+          home
           .appending(path: ".\(rawValue)")
           .appending(path: "skills")
       }
@@ -47,24 +51,25 @@ struct Install: AsyncParsableCommand {
   }
 
   @Option(
+    name: .customLong("tool"),
     help: """
       Which AI tool to install skills for. \
       Options: \(Tool.allCases.map(\.rawValue).joined(separator: ", ")).
       """
   )
-  var tool: Tool?
+  var tools: [Tool] = []
 
-  @Option(help: "Directory to install skills into.")
-  var path: String?
+  @Option(
+    name: .customLong("path"),
+    help: "Directory to install skills into."
+  )
+  var paths: [String] = []
 
-  @Flag(help: "Ignore the local SHA and always download.")
+  @Flag(
+    name: .shortAndLong,
+    help: "Ignore the local SHA and always download."
+  )
   var force = false
-
-  func validate() throws {
-    guard (tool != nil) != (path != nil) else {
-      throw ValidationError("Provide either --tool or --path.")
-    }
-  }
 
   func run() async throws {
     try await install(shouldRetryAfterLogin: true)
@@ -75,6 +80,21 @@ struct Install: AsyncParsableCommand {
     @Dependency(\.fileSystem) var fileSystem
     @Dependency(\.uuid) var uuid
     @Dependency(\.whoAmI) var whoAmI
+
+    let installTargets: [(tool: Tool?, path: String)]
+    if tools.isEmpty, paths.isEmpty {
+      let detectedTools = Tool.allCases.filter { tool in
+        fileSystem.fileExists(atPath: tool.defaultInstallPath.path)
+      }
+      guard !detectedTools.isEmpty else {
+        throw ValidationError("No tools detected in home directory. Provide --tool or --path.")
+      }
+      installTargets = detectedTools.map { (tool: $0, path: $0.defaultInstallPath.path) }
+    } else {
+      installTargets =
+        tools.map { (tool: $0, path: $0.defaultInstallPath.path) }
+        + paths.map { (tool: nil, path: $0) }
+    }
 
     let token = try loadToken()
     let machine = try machine()
@@ -126,16 +146,6 @@ struct Install: AsyncParsableCommand {
     let zipURL = type(of: fileSystem).temporaryDirectory.appending(path: uuid().uuidString + ".zip")
     try fileSystem.write(data, to: zipURL)
 
-    let installPath = path ?? tool?.defaultInstallPath.path ?? ""
-    let expandedPath: String
-    if installPath.hasPrefix("~/") {
-      expandedPath = fileSystem.homeDirectoryForCurrentUser.path + "/" + installPath.dropFirst(2)
-    } else {
-      expandedPath = installPath
-    }
-    let skillsURL = URL(fileURLWithPath: expandedPath)
-    try fileSystem.createDirectory(at: skillsURL, withIntermediateDirectories: true)
-
     let tempUnzipURL = type(of: fileSystem).temporaryDirectory.appending(path: uuid().uuidString)
     try fileSystem.createDirectory(at: tempUnzipURL, withIntermediateDirectories: true)
     try fileSystem.unzipItem(at: zipURL, to: tempUnzipURL)
@@ -145,14 +155,6 @@ struct Install: AsyncParsableCommand {
     else {
       print("Could not unzip skills.")
       throw ExitCode.failure
-    }
-
-    let existing = (try? fileSystem.contentsOfDirectory(at: skillsURL)) ?? []
-    for url in existing
-    where url.lastPathComponent.hasPrefix("pfw-")
-      || url.lastPathComponent == "the-point-free-way"
-    {
-      try? fileSystem.removeItem(at: url)
     }
 
     let centralSkillsURL = pfwDirectoryURL.appendingPathComponent("skills", isDirectory: true)
@@ -168,17 +170,40 @@ struct Install: AsyncParsableCommand {
     for directory in skillDirectories {
       let centralDestination = centralSkillsURL.appendingPathComponent(directory.lastPathComponent)
       try fileSystem.moveItem(at: directory, to: centralDestination)
-      let toolDestination = skillsURL.appendingPathComponent("pfw-\(directory.lastPathComponent)")
-      try fileSystem.createSymbolicLink(at: toolDestination, withDestinationURL: centralDestination)
+    }
+
+    for target in installTargets {
+      let expandedPath: String
+      if target.path.hasPrefix("~/") {
+        expandedPath = fileSystem.homeDirectoryForCurrentUser.path + "/" + target.path.dropFirst(2)
+      } else {
+        expandedPath = target.path
+      }
+      let skillsURL = URL(fileURLWithPath: expandedPath)
+      try fileSystem.createDirectory(at: skillsURL, withIntermediateDirectories: true)
+
+      let existing = (try? fileSystem.contentsOfDirectory(at: skillsURL)) ?? []
+      for url in existing
+      where url.lastPathComponent.hasPrefix("pfw-")
+        || url.lastPathComponent == "the-point-free-way"
+      {
+        try? fileSystem.removeItem(at: url)
+      }
+
+      let centralSkillDirectories =
+        (try? fileSystem.contentsOfDirectory(at: centralSkillsURL)) ?? []
+      for directory in centralSkillDirectories {
+        let toolDestination = skillsURL.appendingPathComponent("pfw-\(directory.lastPathComponent)")
+        try fileSystem.createSymbolicLink(at: toolDestination, withDestinationURL: directory)
+      }
+      if let tool = target.tool {
+        print("Installed skills for \(tool.rawValue) into \(skillsURL.path)")
+      } else {
+        print("Installed skills into \(skillsURL.path)")
+      }
     }
 
     try? fileSystem.removeItem(at: zipURL)
     try? fileSystem.removeItem(at: tempUnzipURL)
-
-    if let tool {
-      print("Installed skills for \(tool.rawValue) into \(skillsURL.path)")
-    } else {
-      print("Installed skills into \(skillsURL.path)")
-    }
   }
 }

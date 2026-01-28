@@ -15,9 +15,7 @@ extension BaseSuite {
         token: "deadbeef"
       )
       $0.continuousClock = TestClock()
-    },
-    .snapshots(  // record: .failed
-    ),
+    }
   )
   @MainActor struct InstallTests {
     @Dependency(\.continuousClock, as: TestClock<Duration>.self) var clock
@@ -27,15 +25,7 @@ extension BaseSuite {
     @Test func noToolOrPathSpecified() async throws {
       await assertCommandThrows(["install"]) {
         """
-        Provide either --tool or --path.
-        """
-      }
-    }
-
-    @Test func bothToolAndPathSpecified() async throws {
-      await assertCommandThrows(["install", "--tool", "codex", "--path", "/User/blob/.codex"]) {
-        """
-        Provide either --tool or --path.
+        No tools detected in home directory. Provide --tool or --path.
         """
       }
     }
@@ -164,6 +154,41 @@ extension BaseSuite {
           """
           Users/
             blob/
+              .codex/
+                skills/
+                  pfw-ComposableArchitecture@ -> /Users/blob/.pfw/skills/ComposableArchitecture
+                  pfw-SQLiteData@ -> /Users/blob/.pfw/skills/SQLiteData
+              .pfw/
+                machine "00000000-0000-0000-0000-000000000001"
+                sha "cafebeef"
+                skills/
+                  ComposableArchitecture/
+                    SKILL.md "# Composable Architecture"
+                    references/
+                      navigation.md "# Navigation"
+                  SQLiteData/
+                    SKILL.md "# SQLiteData"
+                token "deadbeef"
+          tmp/
+          """
+        }
+      }
+
+      @Test func multipleTools() async throws {
+        try await assertCommand(["install", "--tool", "codex", "--tool", "claude"]) {
+          """
+          Installed skills for codex into /Users/blob/.codex/skills
+          Installed skills for claude into /Users/blob/.claude/skills
+          """
+        }
+        assertInlineSnapshot(of: fileSystem, as: .description) {
+          """
+          Users/
+            blob/
+              .claude/
+                skills/
+                  pfw-ComposableArchitecture@ -> /Users/blob/.pfw/skills/ComposableArchitecture
+                  pfw-SQLiteData@ -> /Users/blob/.pfw/skills/SQLiteData
               .codex/
                 skills/
                   pfw-ComposableArchitecture@ -> /Users/blob/.pfw/skills/ComposableArchitecture
@@ -602,6 +627,49 @@ extension BaseSuite {
                     SKILL.md "# SQLiteData"
                 token "deadbeef"
           tmp/
+          """
+        }
+      }
+
+      @Test(
+        .dependencies {
+          try $0.fileSystem.createDirectory(
+            at: URL(filePath: "/Users/blob/.codex/skills"),
+            withIntermediateDirectories: true
+          )
+          try $0.fileSystem.createDirectory(
+            at: URL(filePath: "/Users/blob/.cursor/skills"),
+            withIntermediateDirectories: true
+          )
+        }
+      )
+      func autodetectTools() async throws {
+        try await assertCommand(["install"]) {
+          """
+          Installed skills for codex into /Users/blob/.codex/skills
+          Installed skills for cursor into /Users/blob/.cursor/skills
+          """
+        }
+      }
+
+      @Test func multiplePaths() async throws {
+        try await assertCommand([
+          "install", "--path", "~/.codex", "--path", "/Users/blob/.copilot/skills",
+        ]) {
+          """
+          Installed skills into /Users/blob/.codex
+          Installed skills into /Users/blob/.copilot/skills
+          """
+        }
+      }
+
+      @Test func toolAndPath() async throws {
+        try await assertCommand([
+          "install", "--tool", "codex", "--path", "/Users/blob/.copilot/skills",
+        ]) {
+          """
+          Installed skills for codex into /Users/blob/.codex/skills
+          Installed skills into /Users/blob/.copilot/skills
           """
         }
       }
