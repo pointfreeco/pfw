@@ -127,12 +127,21 @@ struct Install: AsyncParsableCommand {
       try? fileSystem.removeItem(at: url)
     }
 
+    let centralSkillsURL = pfwDirectoryURL.appendingPathComponent("skills", isDirectory: true)
+    try? fileSystem.removeItem(at: centralSkillsURL)
+    try fileSystem.createDirectory(at: centralSkillsURL, withIntermediateDirectories: true)
+
+    let existingCentral = (try? fileSystem.contentsOfDirectory(at: centralSkillsURL)) ?? []
+    for url in existingCentral where url.lastPathComponent.hasPrefix("pfw-") {
+      try? fileSystem.removeItem(at: url)
+    }
+
     let skillDirectories = (try? fileSystem.contentsOfDirectory(at: skillsSourceURL)) ?? []
     for directory in skillDirectories {
-      let name = directory.lastPathComponent
-      let destination = skillsURL.appendingPathComponent("pfw-\(name)")
-      try fileSystem.moveItem(at: directory, to: destination)
-      try fileSystem.write(Data("*".utf8), to: destination.appending(component: ".gitignore"))
+      let centralDestination = centralSkillsURL.appendingPathComponent(directory.lastPathComponent)
+      try fileSystem.moveItem(at: directory, to: centralDestination)
+      let toolDestination = skillsURL.appendingPathComponent("pfw-\(directory.lastPathComponent)")
+      try fileSystem.createSymbolicLink(at: toolDestination, withDestinationURL: centralDestination)
     }
 
     try? fileSystem.removeItem(at: zipURL)
