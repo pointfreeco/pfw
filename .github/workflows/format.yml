@@ -13,11 +13,11 @@ concurrency:
 jobs:
   swift_format:
     name: swift-format
-    runs-on: macos-15
+    runs-on: macos-26
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Select Xcode 26.2
         run: sudo xcode-select -s /Applications/Xcode_26.2.app
       - name: Format

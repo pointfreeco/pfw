@@ -26,7 +26,7 @@ extension BaseSuite {
     func logout() async throws {
       try await assertCommand(["logout"]) {
         """
-        Removed token at /Users/blob/.pfw/token.
+        Logged out
         """
       }
       assertInlineSnapshot(of: fileSystem, as: .description) {
@@ -44,7 +44,7 @@ extension BaseSuite {
     func logout_NotLoggedIn() async throws {
       try await assertCommand(["logout"]) {
         """
-        No token found.
+        Already logged out
         """
       }
     }
