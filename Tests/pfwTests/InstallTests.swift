@@ -25,7 +25,7 @@ extension BaseSuite {
     @Test func noToolOrPathSpecified() async throws {
       await assertCommandThrows(["install"]) {
         """
-        Provide at least one --tool or --path.
+        No tools detected in home directory. Provide --tool or --path.
         """
       }
     }
@@ -627,6 +627,27 @@ extension BaseSuite {
                     SKILL.md "# SQLiteData"
                 token "deadbeef"
           tmp/
+          """
+        }
+      }
+
+      @Test(
+        .dependencies {
+          try $0.fileSystem.createDirectory(
+            at: URL(filePath: "/Users/blob/.codex/skills"),
+            withIntermediateDirectories: true
+          )
+          try $0.fileSystem.createDirectory(
+            at: URL(filePath: "/Users/blob/.cursor/skills"),
+            withIntermediateDirectories: true
+          )
+        }
+      )
+      func autodetectTools() async throws {
+        try await assertCommand(["install"]) {
+          """
+          Installed skills for codex into /Users/blob/.codex/skills
+          Installed skills for cursor into /Users/blob/.cursor/skills
           """
         }
       }

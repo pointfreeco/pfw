@@ -61,16 +61,11 @@ struct Install: AsyncParsableCommand {
   )
   var paths: [String] = []
 
-  @Flag(help: "Ignore the local SHA and always download.")
+  @Flag(
+    name: .shortAndLong,
+    help: "Ignore the local SHA and always download."
+  )
   var force = false
-
-  func validate() throws {
-    let hasTools = !tools.isEmpty
-    let hasPaths = !paths.isEmpty
-    guard hasTools || hasPaths else {
-      throw ValidationError("Provide at least one --tool or --path.")
-    }
-  }
 
   func run() async throws {
     try await install(shouldRetryAfterLogin: true)
@@ -81,6 +76,21 @@ struct Install: AsyncParsableCommand {
     @Dependency(\.fileSystem) var fileSystem
     @Dependency(\.uuid) var uuid
     @Dependency(\.whoAmI) var whoAmI
+
+    let installTargets: [(tool: Tool?, path: String)]
+    if tools.isEmpty, paths.isEmpty {
+      let detectedTools = Tool.allCases.filter { tool in
+        fileSystem.fileExists(atPath: tool.defaultInstallPath.path)
+      }
+      guard !detectedTools.isEmpty else {
+        throw ValidationError("No tools detected in home directory. Provide --tool or --path.")
+      }
+      installTargets = detectedTools.map { (tool: $0, path: $0.defaultInstallPath.path) }
+    } else {
+      installTargets =
+        tools.map { (tool: $0, path: $0.defaultInstallPath.path) }
+          + paths.map { (tool: nil, path: $0) }
+    }
 
     let token = try loadToken()
     let machine = try machine()
@@ -158,9 +168,6 @@ struct Install: AsyncParsableCommand {
       try fileSystem.moveItem(at: directory, to: centralDestination)
     }
 
-    let installTargets: [(tool: Tool?, path: String)] =
-      tools.map { (tool: $0, path: $0.defaultInstallPath.path) }
-        + paths.map { (tool: nil, path: $0) }
     for target in installTargets {
       let expandedPath: String
       if target.path.hasPrefix("~/") {
