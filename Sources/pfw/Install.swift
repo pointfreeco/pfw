@@ -55,17 +55,20 @@ struct Install: AsyncParsableCommand {
   )
   var tools: [Tool] = []
 
-  @Option(help: "Directory to install skills into.")
-  var path: String?
+  @Option(
+    name: .customLong("path"),
+    help: "Directory to install skills into."
+  )
+  var paths: [String] = []
 
   @Flag(help: "Ignore the local SHA and always download.")
   var force = false
 
   func validate() throws {
     let hasTools = !tools.isEmpty
-    let hasPath = path != nil
-    guard hasTools != hasPath else {
-      throw ValidationError("Provide either --tool or --path.")
+    let hasPaths = !paths.isEmpty
+    guard hasTools || hasPaths else {
+      throw ValidationError("Provide at least one --tool or --path.")
     }
   }
 
@@ -156,7 +159,8 @@ struct Install: AsyncParsableCommand {
     }
 
     let installTargets: [(tool: Tool?, path: String)] =
-      path.map { [(tool: nil, path: $0)] } ?? tools.map { (tool: $0, path: $0.defaultInstallPath.path) }
+      tools.map { (tool: $0, path: $0.defaultInstallPath.path) }
+        + paths.map { (tool: nil, path: $0) }
     for target in installTargets {
       let expandedPath: String
       if target.path.hasPrefix("~/") {

@@ -15,9 +15,7 @@ extension BaseSuite {
         token: "deadbeef"
       )
       $0.continuousClock = TestClock()
-    },
-    .snapshots(  // record: .failed
-    ),
+    }
   )
   @MainActor struct InstallTests {
     @Dependency(\.continuousClock, as: TestClock<Duration>.self) var clock
@@ -27,15 +25,7 @@ extension BaseSuite {
     @Test func noToolOrPathSpecified() async throws {
       await assertCommandThrows(["install"]) {
         """
-        Provide either --tool or --path.
-        """
-      }
-    }
-
-    @Test func bothToolAndPathSpecified() async throws {
-      await assertCommandThrows(["install", "--tool", "codex", "--path", "/User/blob/.codex"]) {
-        """
-        Provide either --tool or --path.
+        Provide at least one --tool or --path.
         """
       }
     }
@@ -637,6 +627,28 @@ extension BaseSuite {
                     SKILL.md "# SQLiteData"
                 token "deadbeef"
           tmp/
+          """
+        }
+      }
+
+      @Test func multiplePaths() async throws {
+        try await assertCommand([
+          "install", "--path", "~/.codex", "--path", "/Users/blob/.copilot/skills",
+        ]) {
+          """
+          Installed skills into /Users/blob/.codex
+          Installed skills into /Users/blob/.copilot/skills
+          """
+        }
+      }
+
+      @Test func toolAndPath() async throws {
+        try await assertCommand([
+          "install", "--tool", "codex", "--path", "/Users/blob/.copilot/skills",
+        ]) {
+          """
+          Installed skills for codex into /Users/blob/.codex/skills
+          Installed skills into /Users/blob/.copilot/skills
           """
         }
       }
