@@ -24,32 +24,17 @@ func performLogin(token: String?) async throws {
     return
   }
 
-  #if canImport(Network)
-    @Dependency(\.auth) var auth
-    let redirectURL = try await auth.start()
-    let loginURL = try makeLoginURL(redirectURL: redirectURL)
-    print("Open this URL to log in and approve access:")
-    print(loginURL.absoluteString)
-    try openInBrowser(loginURL)
+  @Dependency(\.auth) var auth
+  let redirectURL = try await auth.start()
+  let loginURL = try makeLoginURL(redirectURL: redirectURL)
+  print("Open this URL to log in and approve access:")
+  print(loginURL.absoluteString)
+  try openInBrowser(loginURL)
 
-    print("\nWaiting for browser redirect...")
-    let receivedToken = try await auth.waitForToken()
-    try save(token: receivedToken)
-    print("Saved token to \(tokenURL.path).")
-  #else
-    let loginURL = try makeLoginURL(redirectURL: nil)
-    print("Open this URL to log in and approve access:")
-    print(loginURL.absoluteString)
-    try openInBrowser(loginURL)
-
-    print("\nAfter approving, paste the token from the redirect URL here:")
-    if let receivedToken = readLine(strippingNewline: true), !receivedToken.isEmpty {
-      try save(token: receivedToken)
-      print("Saved token to \(tokenURL.path).")
-    } else {
-      print("No token entered. Run 'pfw login --token <token>' to log in.")
-    }
-  #endif
+  print("\nWaiting for browser redirect...")
+  let receivedToken = try await auth.waitForToken()
+  try save(token: receivedToken)
+  print("Saved token to \(tokenURL.path).")
 }
 
 func makeLoginURL(redirectURL: URL?) throws -> URL {
