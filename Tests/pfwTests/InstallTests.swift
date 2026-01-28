@@ -335,6 +335,248 @@ extension BaseSuite {
         }
       }
 
+      @Test func cursor() async throws {
+        try await assertCommand(["install", "--tool", "cursor"]) {
+          """
+          Installed skills for cursor into /Users/blob/.cursor/skills
+          """
+        }
+        assertInlineSnapshot(of: fileSystem, as: .description) {
+          """
+          Users/
+            blob/
+              .cursor/
+                skills/
+                  pfw-ComposableArchitecture@ -> /Users/blob/.pfw/skills/ComposableArchitecture
+                  pfw-SQLiteData@ -> /Users/blob/.pfw/skills/SQLiteData
+              .pfw/
+                machine "00000000-0000-0000-0000-000000000001"
+                sha "cafebeef"
+                skills/
+                  ComposableArchitecture/
+                    SKILL.md "# Composable Architecture"
+                    references/
+                      navigation.md "# Navigation"
+                  SQLiteData/
+                    SKILL.md "# SQLiteData"
+                token "deadbeef"
+          tmp/
+          """
+        }
+      }
+
+      @Test func copilot() async throws {
+        try await assertCommand(["install", "--tool", "copilot"]) {
+          """
+          Installed skills for copilot into /Users/blob/.copilot/skills
+          """
+        }
+        assertInlineSnapshot(of: fileSystem, as: .description) {
+          """
+          Users/
+            blob/
+              .copilot/
+                skills/
+                  pfw-ComposableArchitecture@ -> /Users/blob/.pfw/skills/ComposableArchitecture
+                  pfw-SQLiteData@ -> /Users/blob/.pfw/skills/SQLiteData
+              .pfw/
+                machine "00000000-0000-0000-0000-000000000001"
+                sha "cafebeef"
+                skills/
+                  ComposableArchitecture/
+                    SKILL.md "# Composable Architecture"
+                    references/
+                      navigation.md "# Navigation"
+                  SQLiteData/
+                    SKILL.md "# SQLiteData"
+                token "deadbeef"
+          tmp/
+          """
+        }
+      }
+
+      @Test func kiro() async throws {
+        try await assertCommand(["install", "--tool", "kiro"]) {
+          """
+          Installed skills for kiro into /Users/blob/.kiro/skills
+          """
+        }
+        assertInlineSnapshot(of: fileSystem, as: .description) {
+          """
+          Users/
+            blob/
+              .kiro/
+                skills/
+                  pfw-ComposableArchitecture@ -> /Users/blob/.pfw/skills/ComposableArchitecture
+                  pfw-SQLiteData@ -> /Users/blob/.pfw/skills/SQLiteData
+              .pfw/
+                machine "00000000-0000-0000-0000-000000000001"
+                sha "cafebeef"
+                skills/
+                  ComposableArchitecture/
+                    SKILL.md "# Composable Architecture"
+                    references/
+                      navigation.md "# Navigation"
+                  SQLiteData/
+                    SKILL.md "# SQLiteData"
+                token "deadbeef"
+          tmp/
+          """
+        }
+      }
+
+      @Test func gemini() async throws {
+        try await assertCommand(["install", "--tool", "gemini"]) {
+          """
+          Installed skills for gemini into /Users/blob/.gemini/skills
+          """
+        }
+        assertInlineSnapshot(of: fileSystem, as: .description) {
+          """
+          Users/
+            blob/
+              .gemini/
+                skills/
+                  pfw-ComposableArchitecture@ -> /Users/blob/.pfw/skills/ComposableArchitecture
+                  pfw-SQLiteData@ -> /Users/blob/.pfw/skills/SQLiteData
+              .pfw/
+                machine "00000000-0000-0000-0000-000000000001"
+                sha "cafebeef"
+                skills/
+                  ComposableArchitecture/
+                    SKILL.md "# Composable Architecture"
+                    references/
+                      navigation.md "# Navigation"
+                  SQLiteData/
+                    SKILL.md "# SQLiteData"
+                token "deadbeef"
+          tmp/
+          """
+        }
+      }
+
+      @Test func antigravity() async throws {
+        try await assertCommand(["install", "--tool", "antigravity"]) {
+          """
+          Installed skills for antigravity into /Users/blob/.gemini/antigravity/global_skills
+          """
+        }
+        assertInlineSnapshot(of: fileSystem, as: .description) {
+          """
+          Users/
+            blob/
+              .gemini/
+                antigravity/
+                  global_skills/
+                    pfw-ComposableArchitecture@ -> /Users/blob/.pfw/skills/ComposableArchitecture
+                    pfw-SQLiteData@ -> /Users/blob/.pfw/skills/SQLiteData
+              .pfw/
+                machine "00000000-0000-0000-0000-000000000001"
+                sha "cafebeef"
+                skills/
+                  ComposableArchitecture/
+                    SKILL.md "# Composable Architecture"
+                    references/
+                      navigation.md "# Navigation"
+                  SQLiteData/
+                    SKILL.md "# SQLiteData"
+                token "deadbeef"
+          tmp/
+          """
+        }
+      }
+
+      @Test func opencode() async throws {
+        try await assertCommand(["install", "--tool", "opencode"]) {
+          """
+          Installed skills for opencode into /Users/blob/.config/opencode/skills
+          """
+        }
+        assertInlineSnapshot(of: fileSystem, as: .description) {
+          """
+          Users/
+            blob/
+              .config/
+                opencode/
+                  skills/
+                    pfw-ComposableArchitecture@ -> /Users/blob/.pfw/skills/ComposableArchitecture
+                    pfw-SQLiteData@ -> /Users/blob/.pfw/skills/SQLiteData
+              .pfw/
+                machine "00000000-0000-0000-0000-000000000001"
+                sha "cafebeef"
+                skills/
+                  ComposableArchitecture/
+                    SKILL.md "# Composable Architecture"
+                    references/
+                      navigation.md "# Navigation"
+                  SQLiteData/
+                    SKILL.md "# SQLiteData"
+                token "deadbeef"
+          tmp/
+          """
+        }
+      }
+
+      @Test func kimi() async throws {
+        try await assertCommand(["install", "--tool", "kimi"]) {
+          """
+          Installed skills for kimi into /Users/blob/.kimi/skills
+          """
+        }
+        assertInlineSnapshot(of: fileSystem, as: .description) {
+          """
+          Users/
+            blob/
+              .kimi/
+                skills/
+                  pfw-ComposableArchitecture@ -> /Users/blob/.pfw/skills/ComposableArchitecture
+                  pfw-SQLiteData@ -> /Users/blob/.pfw/skills/SQLiteData
+              .pfw/
+                machine "00000000-0000-0000-0000-000000000001"
+                sha "cafebeef"
+                skills/
+                  ComposableArchitecture/
+                    SKILL.md "# Composable Architecture"
+                    references/
+                      navigation.md "# Navigation"
+                  SQLiteData/
+                    SKILL.md "# SQLiteData"
+                token "deadbeef"
+          tmp/
+          """
+        }
+      }
+
+      @Test func droid() async throws {
+        try await assertCommand(["install", "--tool", "droid"]) {
+          """
+          Installed skills for droid into /Users/blob/.factory/skills
+          """
+        }
+        assertInlineSnapshot(of: fileSystem, as: .description) {
+          """
+          Users/
+            blob/
+              .factory/
+                skills/
+                  pfw-ComposableArchitecture@ -> /Users/blob/.pfw/skills/ComposableArchitecture
+                  pfw-SQLiteData@ -> /Users/blob/.pfw/skills/SQLiteData
+              .pfw/
+                machine "00000000-0000-0000-0000-000000000001"
+                sha "cafebeef"
+                skills/
+                  ComposableArchitecture/
+                    SKILL.md "# Composable Architecture"
+                    references/
+                      navigation.md "# Navigation"
+                  SQLiteData/
+                    SKILL.md "# SQLiteData"
+                token "deadbeef"
+          tmp/
+          """
+        }
+      }
+
       @Test func tildePath() async throws {
         try await assertCommand(["install", "--path", "~/.codex"]) {
           """
