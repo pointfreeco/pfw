@@ -274,7 +274,8 @@ extension BaseSuite {
     @Test func moveItemThrowsWhenSourceMissing() throws {
       let source = URL(fileURLWithPath: "/root/missing")
       let destination = URL(fileURLWithPath: "/root/dest")
-      try fileSystem.createDirectory(at: destination.deletingLastPathComponent(), withIntermediateDirectories: true)
+      try fileSystem.createDirectory(
+        at: destination.deletingLastPathComponent(), withIntermediateDirectories: true)
 
       #expect(throws: InMemoryFileSystem.Error.fileNotFound(source.path)) {
         try fileSystem.moveItem(at: source, to: destination)
@@ -320,7 +321,8 @@ extension BaseSuite {
       try fileSystem.createDirectory(at: linkTargetDirectory, withIntermediateDirectories: true)
       try fileSystem.write(Data("payload".utf8), to: linkTargetFile)
       try fileSystem.createSymbolicLink(at: linkToFile, withDestinationURL: file)
-      try fileSystem.createSymbolicLink(at: linkToDirectory, withDestinationURL: linkTargetDirectory)
+      try fileSystem.createSymbolicLink(
+        at: linkToDirectory, withDestinationURL: linkTargetDirectory)
       assertInlineSnapshot(of: fileSystem, as: .description) {
         """
         root/
@@ -356,7 +358,8 @@ extension BaseSuite {
         URL(fileURLWithPath: "/nested/b.txt"): Data("beta".utf8),
       ]
       let archiveData = try JSONEncoder().encode(files)
-      try fileSystem.createDirectory(at: archiveURL.deletingLastPathComponent(), withIntermediateDirectories: true)
+      try fileSystem.createDirectory(
+        at: archiveURL.deletingLastPathComponent(), withIntermediateDirectories: true)
       try fileSystem.write(archiveData, to: archiveURL)
 
       try fileSystem.unzipItem(at: archiveURL, to: destination)

@@ -107,7 +107,8 @@ final class InMemoryFileSystem: FileSystem {
     }
   }
 
-  func unzipItem(at sourceURL: URL, to destinationURL: URL
+  func unzipItem(
+    at sourceURL: URL, to destinationURL: URL
   ) throws {
     let archiveData = try data(at: sourceURL)
     let files = try JSONDecoder().decode([URL: Data].self, from: archiveData)
@@ -221,7 +222,8 @@ final class InMemoryFileSystem: FileSystem {
       state.directories.insert(destinationPath)
 
       let sourcePrefix = sourcePath.hasSuffix("/") ? sourcePath : sourcePath + "/"
-      let destinationPrefix = destinationPath.hasSuffix("/") ? destinationPath : destinationPath + "/"
+      let destinationPrefix =
+        destinationPath.hasSuffix("/") ? destinationPath : destinationPath + "/"
 
       var updatedDirectories: Set<String> = []
       for directory in state.directories {

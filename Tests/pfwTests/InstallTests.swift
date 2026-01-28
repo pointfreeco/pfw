@@ -16,8 +16,7 @@ extension BaseSuite {
       )
       $0.continuousClock = TestClock()
     },
-    .snapshots(
-      // record: .failed
+    .snapshots(  // record: .failed
     ),
   )
   @MainActor struct InstallTests {
