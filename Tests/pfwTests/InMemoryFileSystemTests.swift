@@ -1,3 +1,4 @@
+import CustomDump
 import Dependencies
 import DependenciesTestSupport
 import Foundation
@@ -20,11 +21,7 @@ extension BaseSuite {
       let target = URL(fileURLWithPath: "/root/a/b", isDirectory: true)
 
       #expect(throws: InMemoryFileSystem.Error.directoryNotFound("/root/a")) {
-        try fileSystem.createDirectory(
-          at: target,
-          withIntermediateDirectories: false,
-          attributes: nil
-        )
+        try fileSystem.createDirectory(at: target, withIntermediateDirectories: false)
       }
     }
 
@@ -32,11 +29,7 @@ extension BaseSuite {
       let target = URL(fileURLWithPath: "/root/a/b", isDirectory: true)
       let parent = URL(fileURLWithPath: "/root/a", isDirectory: true)
 
-      try fileSystem.createDirectory(
-        at: target,
-        withIntermediateDirectories: true,
-        attributes: nil
-      )
+      try fileSystem.createDirectory(at: target, withIntermediateDirectories: true)
 
       #expect(fileSystem.fileExists(atPath: parent.path))
       #expect(fileSystem.fileExists(atPath: target.path))
@@ -55,11 +48,7 @@ extension BaseSuite {
       fileSystem.setFile(Data("data".utf8), atPath: fileURL.path)
 
       #expect(throws: InMemoryFileSystem.Error.fileExists(fileURL.path)) {
-        try fileSystem.createDirectory(
-          at: fileURL,
-          withIntermediateDirectories: true,
-          attributes: nil
-        )
+        try fileSystem.createDirectory(at: fileURL, withIntermediateDirectories: true)
       }
     }
 
@@ -69,11 +58,7 @@ extension BaseSuite {
       fileSystem.setFile(Data("data".utf8), atPath: parentFile.path)
 
       #expect(throws: InMemoryFileSystem.Error.notDirectory(parentFile.path)) {
-        try fileSystem.createDirectory(
-          at: target,
-          withIntermediateDirectories: true,
-          attributes: nil
-        )
+        try fileSystem.createDirectory(at: target, withIntermediateDirectories: true)
       }
     }
 
@@ -89,11 +74,7 @@ extension BaseSuite {
       let directory = URL(fileURLWithPath: "/root/dir", isDirectory: true)
       let file = directory.appendingPathComponent("file")
 
-      try fileSystem.createDirectory(
-        at: directory,
-        withIntermediateDirectories: true,
-        attributes: nil
-      )
+      try fileSystem.createDirectory(at: directory, withIntermediateDirectories: true)
       try fileSystem.write(Data("data".utf8), to: file)
 
       try fileSystem.removeItem(at: directory)
@@ -117,11 +98,7 @@ extension BaseSuite {
     @Test func writeToDirectoryThrows() throws {
       let directory = URL(fileURLWithPath: "/root/dir", isDirectory: true)
 
-      try fileSystem.createDirectory(
-        at: directory,
-        withIntermediateDirectories: true,
-        attributes: nil
-      )
+      try fileSystem.createDirectory(at: directory, withIntermediateDirectories: true)
 
       #expect(throws: InMemoryFileSystem.Error.isDirectory(directory.path)) {
         try fileSystem.write(Data("data".utf8), to: directory)
@@ -139,11 +116,7 @@ extension BaseSuite {
     @Test func dataAtDirectoryThrows() throws {
       let directory = URL(fileURLWithPath: "/root/dir", isDirectory: true)
 
-      try fileSystem.createDirectory(
-        at: directory,
-        withIntermediateDirectories: true,
-        attributes: nil
-      )
+      try fileSystem.createDirectory(at: directory, withIntermediateDirectories: true)
 
       #expect(throws: InMemoryFileSystem.Error.isDirectory(directory.path)) {
         _ = try fileSystem.data(at: directory)
@@ -154,11 +127,7 @@ extension BaseSuite {
       let directory = URL(fileURLWithPath: "/root/dir", isDirectory: true)
       let file = directory.appendingPathComponent("file")
 
-      try fileSystem.createDirectory(
-        at: directory,
-        withIntermediateDirectories: true,
-        attributes: nil
-      )
+      try fileSystem.createDirectory(at: directory, withIntermediateDirectories: true)
       try fileSystem.write(Data("data".utf8), to: file)
       #expect(fileSystem.fileExists(atPath: directory.path))
       #expect(fileSystem.fileExists(atPath: file.path))
@@ -186,11 +155,7 @@ extension BaseSuite {
       let link = directory.appendingPathComponent("link")
       let destination = URL(fileURLWithPath: "/root/target")
 
-      try fileSystem.createDirectory(
-        at: directory,
-        withIntermediateDirectories: true,
-        attributes: nil
-      )
+      try fileSystem.createDirectory(at: directory, withIntermediateDirectories: true)
       try fileSystem.write(Data("data".utf8), to: link)
 
       #expect(throws: InMemoryFileSystem.Error.fileExists(link.path)) {
@@ -203,11 +168,7 @@ extension BaseSuite {
       let target = directory.appendingPathComponent("target")
       let link = directory.appendingPathComponent("link")
 
-      try fileSystem.createDirectory(
-        at: directory,
-        withIntermediateDirectories: true,
-        attributes: nil
-      )
+      try fileSystem.createDirectory(at: directory, withIntermediateDirectories: true)
       try fileSystem.write(Data("payload".utf8), to: target)
       try fileSystem.createSymbolicLink(at: link, withDestinationURL: target)
 
@@ -217,7 +178,7 @@ extension BaseSuite {
         """
         root/
           dir/
-            link -> /root/dir/target
+            link@ -> /root/dir/target
             target "payload"
         tmp/
         """
@@ -229,11 +190,7 @@ extension BaseSuite {
       let target = directory.appendingPathComponent("target")
       let link = directory.appendingPathComponent("link")
 
-      try fileSystem.createDirectory(
-        at: directory,
-        withIntermediateDirectories: true,
-        attributes: nil
-      )
+      try fileSystem.createDirectory(at: directory, withIntermediateDirectories: true)
       try fileSystem.write(Data("payload".utf8), to: target)
       try fileSystem.createSymbolicLink(at: link, withDestinationURL: target)
 
@@ -251,6 +208,146 @@ extension BaseSuite {
       }
     }
 
+    @Test func moveItemMovesFile() throws {
+      let directory = URL(fileURLWithPath: "/root/dir", isDirectory: true)
+      let source = directory.appendingPathComponent("source.txt")
+      let destination = directory.appendingPathComponent("dest.txt")
+
+      try fileSystem.createDirectory(at: directory, withIntermediateDirectories: true)
+      try fileSystem.write(Data("data".utf8), to: source)
+      assertInlineSnapshot(of: fileSystem, as: .description) {
+        """
+        root/
+          dir/
+            source.txt "data"
+        tmp/
+        """
+      }
+
+      try fileSystem.moveItem(at: source, to: destination)
+      #expect(!fileSystem.fileExists(atPath: source.path))
+      assertInlineSnapshot(of: fileSystem, as: .description) {
+        """
+        root/
+          dir/
+            dest.txt "data"
+        tmp/
+        """
+      }
+    }
+
+    @Test func moveItemMovesDirectoryTree() throws {
+      let source = URL(fileURLWithPath: "/root/source", isDirectory: true)
+      let destination = URL(fileURLWithPath: "/root/dest", isDirectory: true)
+      let nested = source.appendingPathComponent("nested/file.txt")
+
+      try fileSystem.createDirectory(
+        at: nested.deletingLastPathComponent(),
+        withIntermediateDirectories: true
+      )
+      try fileSystem.write(Data("payload".utf8), to: nested)
+      assertInlineSnapshot(of: fileSystem, as: .description) {
+        """
+        root/
+          source/
+            nested/
+              file.txt "payload"
+        tmp/
+        """
+      }
+
+      try fileSystem.moveItem(at: source, to: destination)
+
+      #expect(!fileSystem.fileExists(atPath: source.path))
+      #expect(fileSystem.fileExists(atPath: destination.path))
+      assertInlineSnapshot(of: fileSystem, as: .description) {
+        """
+        root/
+          dest/
+            nested/
+              file.txt "payload"
+        tmp/
+        """
+      }
+    }
+
+    @Test func moveItemThrowsWhenSourceMissing() throws {
+      let source = URL(fileURLWithPath: "/root/missing")
+      let destination = URL(fileURLWithPath: "/root/dest")
+      try fileSystem.createDirectory(at: destination.deletingLastPathComponent(), withIntermediateDirectories: true)
+
+      #expect(throws: InMemoryFileSystem.Error.fileNotFound(source.path)) {
+        try fileSystem.moveItem(at: source, to: destination)
+      }
+    }
+
+    @Test func moveItemThrowsWhenDestinationExists() throws {
+      let directory = URL(fileURLWithPath: "/root/dir", isDirectory: true)
+      let source = directory.appendingPathComponent("source.txt")
+      let destination = directory.appendingPathComponent("dest.txt")
+
+      try fileSystem.createDirectory(at: directory, withIntermediateDirectories: true)
+      try fileSystem.write(Data("one".utf8), to: source)
+      try fileSystem.write(Data("two".utf8), to: destination)
+
+      #expect(throws: InMemoryFileSystem.Error.fileExists(destination.path)) {
+        try fileSystem.moveItem(at: source, to: destination)
+      }
+    }
+
+    @Test func moveItemThrowsWhenDestinationParentMissing() throws {
+      let source = URL(fileURLWithPath: "/root/source.txt")
+      let destination = URL(fileURLWithPath: "/root/missing/dest.txt")
+
+      try fileSystem.write(Data("data".utf8), to: source)
+
+      #expect(throws: InMemoryFileSystem.Error.directoryNotFound("/root/missing")) {
+        try fileSystem.moveItem(at: source, to: destination)
+      }
+    }
+
+    @Test func contentsOfDirectoryReturnsImmediateChildren() throws {
+      let root = URL(fileURLWithPath: "/root", isDirectory: true)
+      let directory = URL(fileURLWithPath: "/root/dir", isDirectory: true)
+      let file = URL(fileURLWithPath: "/root/file.txt")
+      let linkToFile = URL(fileURLWithPath: "/root/link-file")
+      let linkTargetDirectory = URL(fileURLWithPath: "/root/linked", isDirectory: true)
+      let linkToDirectory = URL(fileURLWithPath: "/root/link-dir")
+      let linkTargetFile = linkTargetDirectory.appendingPathComponent("inner.txt")
+
+      try fileSystem.createDirectory(at: directory, withIntermediateDirectories: true)
+      try fileSystem.write(Data("data".utf8), to: file)
+      try fileSystem.createDirectory(at: linkTargetDirectory, withIntermediateDirectories: true)
+      try fileSystem.write(Data("payload".utf8), to: linkTargetFile)
+      try fileSystem.createSymbolicLink(at: linkToFile, withDestinationURL: file)
+      try fileSystem.createSymbolicLink(at: linkToDirectory, withDestinationURL: linkTargetDirectory)
+      assertInlineSnapshot(of: fileSystem, as: .description) {
+        """
+        root/
+          dir/
+          file.txt "data"
+          link-dir@ -> /root/linked
+          link-file@ -> /root/file.txt
+          linked/
+            inner.txt "payload"
+        tmp/
+        """
+      }
+
+      expectNoDifference(
+        try fileSystem
+          .contentsOfDirectory(at: root)
+          .sorted(by: { $0.absoluteString < $1.absoluteString }),
+        [
+          URL(fileURLWithPath: "/root/dir"),
+          URL(fileURLWithPath: "/root/file.txt"),
+          URL(fileURLWithPath: "/root/link-dir"),
+          URL(fileURLWithPath: "/root/link-file"),
+          URL(fileURLWithPath: "/root/linked"),
+        ]
+      )
+    }
+
     @Test func unzipWritesFilesIntoDestination() throws {
       let destination = URL(fileURLWithPath: "/root/unzipped", isDirectory: true)
       let archiveURL = URL(fileURLWithPath: "/root/archive.zip")
@@ -259,21 +356,10 @@ extension BaseSuite {
         URL(fileURLWithPath: "/nested/b.txt"): Data("beta".utf8),
       ]
       let archiveData = try JSONEncoder().encode(files)
-      try fileSystem.createDirectory(
-        at: archiveURL.deletingLastPathComponent(),
-        withIntermediateDirectories: true,
-        attributes: nil
-      )
+      try fileSystem.createDirectory(at: archiveURL.deletingLastPathComponent(), withIntermediateDirectories: true)
       try fileSystem.write(archiveData, to: archiveURL)
 
-      try fileSystem.unzipItem(
-        at: archiveURL,
-        to: destination,
-        skipCRC32: false,
-        allowUncontainedSymlinks: false,
-        progress: nil,
-        pathEncoding: nil
-      )
+      try fileSystem.unzipItem(at: archiveURL, to: destination)
 
       assertInlineSnapshot(of: fileSystem, as: .description) {
         """
@@ -293,14 +379,7 @@ extension BaseSuite {
       let destination = URL(fileURLWithPath: "/root/unzipped", isDirectory: true)
 
       #expect(throws: InMemoryFileSystem.Error.fileNotFound(archiveURL.path)) {
-        try fileSystem.unzipItem(
-          at: archiveURL,
-          to: destination,
-          skipCRC32: false,
-          allowUncontainedSymlinks: false,
-          progress: nil,
-          pathEncoding: nil
-        )
+        try fileSystem.unzipItem(at: archiveURL, to: destination)
       }
     }
   }

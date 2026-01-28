@@ -47,11 +47,7 @@ final class InMemoryFileSystem: FileSystem {
     state.withValue { $0.files[normalize(path)] = data }
   }
 
-  func createDirectory(
-    at url: URL,
-    withIntermediateDirectories createIntermediates: Bool,
-    attributes: [FileAttributeKey: Any]?
-  ) throws {
+  func createDirectory(at url: URL, withIntermediateDirectories createIntermediates: Bool) throws {
     let path = normalize(url)
     try state.withValue { state in
       guard state.files[path] == nil, state.symbolicLinks[path] == nil else {
@@ -111,13 +107,7 @@ final class InMemoryFileSystem: FileSystem {
     }
   }
 
-  func unzipItem(
-    at sourceURL: URL,
-    to destinationURL: URL,
-    skipCRC32: Bool,
-    allowUncontainedSymlinks: Bool,
-    progress: Progress?,
-    pathEncoding: String.Encoding?
+  func unzipItem(at sourceURL: URL, to destinationURL: URL
   ) throws {
     let archiveData = try data(at: sourceURL)
     let files = try JSONDecoder().decode([URL: Data].self, from: archiveData)
@@ -129,7 +119,7 @@ final class InMemoryFileSystem: FileSystem {
         : sourcePath.path
       let destination = destinationURL.appendingPathComponent(relativePath)
       let parent = destination.deletingLastPathComponent()
-      try createDirectory(at: parent, withIntermediateDirectories: true, attributes: nil)
+      try createDirectory(at: parent, withIntermediateDirectories: true)
       try write(contents, to: destination)
     }
   }
@@ -197,6 +187,118 @@ final class InMemoryFileSystem: FileSystem {
         throw Error.fileExists(linkPath)
       }
       state.symbolicLinks[linkPath] = destinationPath
+    }
+  }
+
+  func moveItem(at srcURL: URL, to dstURL: URL) throws {
+    let sourcePath = normalize(srcURL)
+    let destinationPath = normalize(dstURL)
+    let destinationParent = normalize(dstURL.deletingLastPathComponent())
+    try state.withValue { state in
+      guard state.directories.contains(destinationParent) else {
+        throw Error.directoryNotFound(destinationParent)
+      }
+      guard state.files[destinationPath] == nil,
+        state.directories.contains(destinationPath) == false,
+        state.symbolicLinks[destinationPath] == nil
+      else {
+        throw Error.fileExists(destinationPath)
+      }
+
+      if let data = state.files.removeValue(forKey: sourcePath) {
+        state.files[destinationPath] = data
+        return
+      }
+      if let link = state.symbolicLinks.removeValue(forKey: sourcePath) {
+        state.symbolicLinks[destinationPath] = link
+        return
+      }
+      guard state.directories.contains(sourcePath) else {
+        throw Error.fileNotFound(sourcePath)
+      }
+
+      state.directories.remove(sourcePath)
+      state.directories.insert(destinationPath)
+
+      let sourcePrefix = sourcePath.hasSuffix("/") ? sourcePath : sourcePath + "/"
+      let destinationPrefix = destinationPath.hasSuffix("/") ? destinationPath : destinationPath + "/"
+
+      var updatedDirectories: Set<String> = []
+      for directory in state.directories {
+        if directory.hasPrefix(sourcePrefix) {
+          let suffix = directory.dropFirst(sourcePrefix.count)
+          updatedDirectories.insert(destinationPrefix + suffix)
+        } else {
+          updatedDirectories.insert(directory)
+        }
+      }
+      state.directories = updatedDirectories
+
+      var updatedFiles: [String: Data] = [:]
+      for (path, data) in state.files {
+        if path.hasPrefix(sourcePrefix) {
+          let suffix = path.dropFirst(sourcePrefix.count)
+          updatedFiles[destinationPrefix + suffix] = data
+        } else {
+          updatedFiles[path] = data
+        }
+      }
+      state.files = updatedFiles
+
+      var updatedLinks: [String: String] = [:]
+      for (path, target) in state.symbolicLinks {
+        if path.hasPrefix(sourcePrefix) {
+          let suffix = path.dropFirst(sourcePrefix.count)
+          updatedLinks[destinationPrefix + suffix] = target
+        } else {
+          updatedLinks[path] = target
+        }
+      }
+      state.symbolicLinks = updatedLinks
+    }
+  }
+
+  func contentsOfDirectory(at url: URL) throws -> [URL] {
+    let path = normalize(url)
+    return try state.withValue { state in
+      guard state.directories.contains(path) else {
+        if state.files[path] != nil || state.symbolicLinks[path] != nil {
+          throw Error.notDirectory(path)
+        }
+        throw Error.directoryNotFound(path)
+      }
+
+      let prefix = path.hasSuffix("/") ? path : path + "/"
+      var children: Set<String> = []
+
+      for directory in state.directories {
+        if directory.hasPrefix(prefix) {
+          let remainder = directory.dropFirst(prefix.count)
+          if let next = remainder.split(separator: "/").first, !next.isEmpty {
+            children.insert(String(next))
+          }
+        }
+      }
+
+      for file in state.files.keys {
+        if file.hasPrefix(prefix) {
+          let remainder = file.dropFirst(prefix.count)
+          if let next = remainder.split(separator: "/").first, !next.isEmpty {
+            children.insert(String(next))
+          }
+        }
+      }
+
+      for link in state.symbolicLinks.keys {
+        if link.hasPrefix(prefix) {
+          let remainder = link.dropFirst(prefix.count)
+          if let next = remainder.split(separator: "/").first, !next.isEmpty {
+            children.insert(String(next))
+          }
+        }
+      }
+
+      return children.sorted().map { url.appendingPathComponent($0) }
     }
   }
 }
@@ -267,7 +369,7 @@ private func insert(path: String, into root: FileNode, link: String) {
 
 private func render(node: FileNode, into lines: inout [String], indent: String) {
   if let linkDestination = node.linkDestination {
-    lines.append("\(indent)\(node.name) -> \(linkDestination)")
+    lines.append("\(indent)\(node.name)@ -> \(linkDestination)")
   } else if node.data == nil {
     lines.append("\(indent)\(node.name)/")
   } else {

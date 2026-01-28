@@ -8,10 +8,7 @@ let package = Package(
     .macOS(.v15)
   ],
   products: [
-    .executable(
-      name: "pfw",
-      targets: ["pfw"]
-    )
+    .executable(name: "pfw", targets: ["pfw"])
   ],
   dependencies: [
     .package(url: "https://github.com/apple/swift-argument-parser", from: "1.5.0"),

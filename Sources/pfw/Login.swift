@@ -55,9 +55,7 @@ func performLogin(token: String?) async throws {
 func makeLoginURL(redirectURL: URL?) throws -> URL {
   @Dependency(\.whoAmI) var whoAmI
 
-  guard var components = URLComponents(string: URL.baseURL) else {
-    return URL(string: "https://www.pointfree.co/account/the-way/login")!
-  }
+  var components = URLComponents(url: .baseURL, resolvingAgainstBaseURL: false)!
   components.path = "/account/the-way/login"
   var items = [
     URLQueryItem(name: "whoami", value: whoAmI()),
@@ -67,5 +65,12 @@ func makeLoginURL(redirectURL: URL?) throws -> URL {
     items.append(URLQueryItem(name: "redirect", value: redirectURL.absoluteString))
   }
   components.queryItems = items
-  return components.url ?? URL(string: "https://www.pointfree.co/account/the-way/login")!
+  guard let url = components.url
+  else {
+    struct InvalidRedirectURL: Error {
+      let components: URLComponents
+    }
+    throw InvalidRedirectURL(components: components)
+  }
+  return url
 }

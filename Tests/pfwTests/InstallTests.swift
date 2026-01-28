@@ -15,7 +15,10 @@ extension BaseSuite {
         token: "deadbeef"
       )
       $0.continuousClock = TestClock()
-    }
+    },
+    .snapshots(
+      // record: .failed
+    ),
   )
   @MainActor struct InstallTests {
     @Dependency(\.continuousClock, as: TestClock<Duration>.self) var clock
@@ -85,7 +88,7 @@ extension BaseSuite {
           Waiting for browser redirect...
           Saved token to /Users/blob/.pfw/token.
           Login complete. Retrying install...
-          Installed skills for codex into /Users/blob/.codex/skills/the-point-free-way
+          Installed skills for codex into /Users/blob/.codex/skills
           """
         }
       }
@@ -104,15 +107,13 @@ extension BaseSuite {
           blob/
             .codex/
               skills/
-                the-point-free-way/
-                  skills/
-                    ComposableArchitecture/
-                      SKILL.md "# Composable Architecture"
+                pfw-ComposableArchitecture/
+                  .gitignore "*"
+                  SKILL.md "# Composable Architecture"
             .pfw/
               machine "00000000-0000-0000-0000-000000000002"
               token "deadbeef"
         tmp/
-          00000000-0000-0000-0000-000000000003 (94 bytes)
         """
       }
     }
@@ -149,7 +150,7 @@ extension BaseSuite {
       @Test func codex() async throws {
         try await assertCommand(["install", "--tool", "codex"]) {
           """
-          Installed skills for codex into /Users/blob/.codex/skills/the-point-free-way
+          Installed skills for codex into /Users/blob/.codex/skills
           """
         }
         assertInlineSnapshot(of: fileSystem, as: .description) {
@@ -158,19 +159,120 @@ extension BaseSuite {
             blob/
               .codex/
                 skills/
-                  the-point-free-way/
-                    skills/
-                      ComposableArchitecture/
-                        SKILL.md "# Composable Architecture"
-                        references/
-                          navigation.md "# Navigation"
-                      SQLiteData/
-                        SKILL.md "# SQLiteData"
+                  pfw-ComposableArchitecture/
+                    .gitignore "*"
+                    SKILL.md "# Composable Architecture"
+                    references/
+                      navigation.md "# Navigation"
+                  pfw-SQLiteData/
+                    .gitignore "*"
+                    SKILL.md "# SQLiteData"
               .pfw/
                 machine "00000000-0000-0000-0000-000000000001"
                 token "deadbeef"
           tmp/
-            00000000-0000-0000-0000-000000000002 (245 bytes)
+          """
+        }
+      }
+
+      @Test func deletesPreviousPFWDirectories() async throws {
+        try fileSystem.createDirectory(
+          at: URL(filePath: "/Users/blob/.codex/skills/pfw-ComposableArchitecture"),
+          withIntermediateDirectories: true
+        )
+        try fileSystem.write(
+          Data("Old stuff".utf8),
+          to: URL(filePath: "/Users/blob/.codex/skills/pfw-ComposableArchitecture/SKILL.md")
+        )
+        try fileSystem.createDirectory(
+          at: URL(filePath: "/Users/blob/.codex/skills/pfw-UnrecognizedSkill"),
+          withIntermediateDirectories: true
+        )
+        assertInlineSnapshot(of: fileSystem, as: .description) {
+          """
+          Users/
+            blob/
+              .codex/
+                skills/
+                  pfw-ComposableArchitecture/
+                    SKILL.md "Old stuff"
+                  pfw-UnrecognizedSkill/
+              .pfw/
+                machine "00000000-0000-0000-0000-000000000000"
+                token "deadbeef"
+          tmp/
+          """
+        }
+
+        try await assertCommand(["install", "--tool", "codex"]) {
+          """
+          Installed skills for codex into /Users/blob/.codex/skills
+          """
+        }
+        assertInlineSnapshot(of: fileSystem, as: .description) {
+          """
+          Users/
+            blob/
+              .codex/
+                skills/
+                  pfw-ComposableArchitecture/
+                    .gitignore "*"
+                    SKILL.md "# Composable Architecture"
+                    references/
+                      navigation.md "# Navigation"
+                  pfw-SQLiteData/
+                    .gitignore "*"
+                    SKILL.md "# SQLiteData"
+              .pfw/
+                machine "00000000-0000-0000-0000-000000000001"
+                token "deadbeef"
+          tmp/
+          """
+        }
+      }
+
+      @Test func deletesOldPFWDirectory() async throws {
+        try fileSystem.createDirectory(
+          at: URL(filePath: "/Users/blob/.codex/skills/the-point-free-way"),
+          withIntermediateDirectories: true
+        )
+        assertInlineSnapshot(of: fileSystem, as: .description) {
+          """
+          Users/
+            blob/
+              .codex/
+                skills/
+                  the-point-free-way/
+              .pfw/
+                machine "00000000-0000-0000-0000-000000000000"
+                token "deadbeef"
+          tmp/
+          """
+        }
+
+        try await assertCommand(["install", "--tool", "codex"]) {
+          """
+          Installed skills for codex into /Users/blob/.codex/skills
+          """
+        }
+        assertInlineSnapshot(of: fileSystem, as: .description) {
+          """
+          Users/
+            blob/
+              .codex/
+                skills/
+                  pfw-ComposableArchitecture/
+                    .gitignore "*"
+                    SKILL.md "# Composable Architecture"
+                    references/
+                      navigation.md "# Navigation"
+                  pfw-SQLiteData/
+                    .gitignore "*"
+                    SKILL.md "# SQLiteData"
+              .pfw/
+                machine "00000000-0000-0000-0000-000000000001"
+                token "deadbeef"
+          tmp/
           """
         }
       }
@@ -178,7 +280,7 @@ extension BaseSuite {
       @Test func claude() async throws {
         try await assertCommand(["install", "--tool", "claude"]) {
           """
-          Installed skills for claude into /Users/blob/.claude/skills/the-point-free-way
+          Installed skills for claude into /Users/blob/.claude/skills
           """
         }
         assertInlineSnapshot(of: fileSystem, as: .description) {
@@ -187,44 +289,89 @@ extension BaseSuite {
             blob/
               .claude/
                 skills/
-                  the-point-free-way/
-                    skills/
-                      ComposableArchitecture/
-                        SKILL.md "# Composable Architecture"
-                        references/
-                          navigation.md "# Navigation"
-                      SQLiteData/
-                        SKILL.md "# SQLiteData"
+                  pfw-ComposableArchitecture/
+                    .gitignore "*"
+                    SKILL.md "# Composable Architecture"
+                    references/
+                      navigation.md "# Navigation"
+                  pfw-SQLiteData/
+                    .gitignore "*"
+                    SKILL.md "# SQLiteData"
               .pfw/
                 machine "00000000-0000-0000-0000-000000000001"
                 token "deadbeef"
           tmp/
-            00000000-0000-0000-0000-000000000002 (245 bytes)
           """
         }
       }
 
-      // NB: This test shows a problem with using the '--path' option that we need to fix.
-      //      @Test(
-      //        .dependencies {
-      //          try $0.fileSystem.createDirectory(
-      //            at: URL(filePath: "/Users/blob/.copilot/skills"),
-      //            withIntermediateDirectories: true
-      //          )
-      //          try $0.fileSystem.write(
-      //            Data("Hello".utf8),
-      //            to: URL(filePath: "/Users/blob/.copilot/skills/dont-delete.md")
-      //          )
-      //        }
-      //      )
-      //      func customPath() async throws {
-      //        try await assertCommand(["install", "--path", "/Users/blob/.copilot/skills"]) {
-      //          """
-      //          Installed skills into /Users/blob/.copilot/skills
-      //          """
-      //        }
-      //        assertInlineSnapshot(of: fileSystem, as: .description)
-      //      }
+      @Test func tildePath() async throws {
+        try await assertCommand(["install", "--path", "~/.codex"]) {
+          """
+          Installed skills into /Users/blob/.codex
+          """
+        }
+        assertInlineSnapshot(of: fileSystem, as: .description) {
+          """
+          Users/
+            blob/
+              .codex/
+                pfw-ComposableArchitecture/
+                  .gitignore "*"
+                  SKILL.md "# Composable Architecture"
+                  references/
+                    navigation.md "# Navigation"
+                pfw-SQLiteData/
+                  .gitignore "*"
+                  SKILL.md "# SQLiteData"
+              .pfw/
+                machine "00000000-0000-0000-0000-000000000001"
+                token "deadbeef"
+          tmp/
+          """
+        }
+      }
+
+      @Test(
+        .dependencies {
+          try $0.fileSystem.createDirectory(
+            at: URL(filePath: "/Users/blob/.copilot/skills"),
+            withIntermediateDirectories: true
+          )
+          try $0.fileSystem.write(
+            Data("Hello".utf8),
+            to: URL(filePath: "/Users/blob/.copilot/skills/dont-delete.md")
+          )
+        }
+      )
+      func customPath() async throws {
+        try await assertCommand(["install", "--path", "/Users/blob/.copilot/skills"]) {
+          """
+          Installed skills into /Users/blob/.copilot/skills
+          """
+        }
+        assertInlineSnapshot(of: fileSystem, as: .description) {
+          """
+          Users/
+            blob/
+              .copilot/
+                skills/
+                  dont-delete.md "Hello"
+                  pfw-ComposableArchitecture/
+                    .gitignore "*"
+                    SKILL.md "# Composable Architecture"
+                    references/
+                      navigation.md "# Navigation"
+                  pfw-SQLiteData/
+                    .gitignore "*"
+                    SKILL.md "# SQLiteData"
+              .pfw/
+                machine "00000000-0000-0000-0000-000000000001"
+                token "deadbeef"
+          tmp/
+          """
+        }
+      }
     }
   }
 }

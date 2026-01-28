@@ -1,11 +1,11 @@
 import Foundation
 
 extension URL {
-  static var baseURL: String {
+  static var baseURL: URL {
     #if DEBUG
-      return "http://localhost:8080"
+      return URL(string: "http://localhost:8080")!
     #else
-      return "https://www.pointfree.co"
+      return URL(string: "https://www.pointfree.co")!
     #endif
   }
 }
