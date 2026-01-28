@@ -4,16 +4,16 @@ import Foundation
 
 struct Logout: ParsableCommand {
   static let configuration = CommandConfiguration(
-    abstract: "Log out and remove the stored token."
+    abstract: "Remove any stored credentials."
   )
 
   func run() throws {
     @Dependency(\.fileSystem) var fileSystem
     do {
       try fileSystem.removeItem(at: tokenURL)
-      print("Removed token at \(tokenURL.path).")
+      print("Logged out")
     } catch {
-      print("No token found.")
+      print("Already logged out")
     }
   }
 }

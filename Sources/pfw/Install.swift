@@ -131,6 +131,7 @@ struct Install: AsyncParsableCommand {
       let name = directory.lastPathComponent
       let destination = skillsURL.appendingPathComponent("pfw-\(name)")
       try fileSystem.moveItem(at: directory, to: destination)
+      try fileSystem.write(Data("*".utf8), to: destination.appending(component: ".gitignore"))
     }
 
     try? fileSystem.removeItem(at: zipURL)

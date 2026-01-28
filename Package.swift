@@ -7,6 +7,9 @@ let package = Package(
   platforms: [
     .macOS(.v15)
   ],
+  products: [
+    .executable(name: "pfw", targets: ["pfw"])
+  ],
   dependencies: [
     .package(url: "https://github.com/apple/swift-argument-parser", from: "1.5.0"),
     .package(url: "https://github.com/pointfreeco/swift-concurrency-extras", from: "1.0.0"),
