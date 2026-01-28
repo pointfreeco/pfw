@@ -41,5 +41,5 @@ jobs:
         uses: swift-actions/setup-swift@v3
         with:
           swift-version: ${{ matrix.swift }}
-      - name: Build
-        run: swift build
+      - name: Test
+        run: swift test

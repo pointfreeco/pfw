@@ -12,6 +12,7 @@ let package = Package(
   ],
   dependencies: [
     .package(url: "https://github.com/apple/swift-argument-parser", from: "1.5.0"),
+    .package(url: "https://github.com/apple/swift-nio", from: "2.60.0"),
     .package(url: "https://github.com/pointfreeco/swift-concurrency-extras", from: "1.0.0"),
     .package(url: "https://github.com/pointfreeco/swift-custom-dump", from: "1.0.0"),
     .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.0.0"),
@@ -26,6 +27,8 @@ let package = Package(
         .product(name: "ConcurrencyExtras", package: "swift-concurrency-extras"),
         .product(name: "CustomDump", package: "swift-custom-dump"),
         .product(name: "Dependencies", package: "swift-dependencies"),
+        .product(name: "NIO", package: "swift-nio"),
+        .product(name: "NIOHTTP1", package: "swift-nio"),
         .product(name: "ZIPFoundation", package: "ZIPFoundation"),
       ],
       swiftSettings: [

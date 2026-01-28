@@ -1,11 +1,9 @@
 import ArgumentParser
 import Dependencies
 import Foundation
+import NIO
+import NIOHTTP1
 import Synchronization
-
-#if canImport(Network)
-  import Network
-#endif
 
 protocol Auth: Sendable {
   func start() async throws -> URL
@@ -14,11 +12,7 @@ protocol Auth: Sendable {
 
 private enum AuthKey: DependencyKey {
   static var liveValue: any Auth {
-    #if canImport(Network)
-      return try! LocalAuthServer()
-    #else
-      return UnimplementedAuthServer()
-    #endif
+    LocalAuthServer()
   }
 }
 
@@ -40,102 +34,128 @@ actor UnimplementedAuthServer: Auth {
   }
 }
 
-#if canImport(Network)
-  actor LocalAuthServer: Auth {
-    private let listener: NWListener
-    private let queue = DispatchQueue(label: "pfw.auth.server")
-    private var tokenContinuation: CheckedContinuation<String, Error>?
+actor LocalAuthServer: Auth {
+  private let group = MultiThreadedEventLoopGroup(numberOfThreads: 1)
+  private var channel: Channel?
+  private var tokenContinuation: CheckedContinuation<String, Error>?
+  private var hasShutdown = false
 
-    init() throws {
-      listener = try NWListener(using: .tcp, on: .any)
-    }
-
-    func start() async throws -> URL {
-      let hasStarted = Mutex(false)
-      listener.stateUpdateHandler = { state in
-        guard state == .ready
-        else { return }
-        hasStarted.withLock { $0 = true }
-      }
-      listener.newConnectionHandler = { [weak self] connection in
-        Task {
-          connection.start(queue: self?.queue ?? .main)
-          await self?.receiveToken(from: connection)
+  func start() async throws -> URL {
+    let bootstrap = ServerBootstrap(group: group)
+      .serverChannelOption(ChannelOptions.backlog, value: 16)
+      .serverChannelOption(ChannelOptions.socketOption(.so_reuseaddr), value: 1)
+      .childChannelInitializer { channel in
+        channel.pipeline.configureHTTPServerPipeline().flatMap {
+          channel.pipeline.addHandler(
+            AuthHTTPHandler { result in
+              Task { await self.finish(with: result) }
+            }
+          )
         }
       }
-      listener.start(queue: queue)
-      while !hasStarted.withLock(\.self) {
-        try await Task.sleep(for: .seconds(0.1))
-        // TODO: Timeout if takes too long
-      }
-      guard let port = listener.port else {
-        throw ValidationError("Unable to determine callback port.")
-      }
-      return URL(string: "http://127.0.0.1:\(port)/callback")!
-    }
+      .childChannelOption(ChannelOptions.socketOption(.so_reuseaddr), value: 1)
 
-    func waitForToken() async throws -> String {
-      try await withCheckedThrowingContinuation { continuation in
-        tokenContinuation = continuation
-      }
+    let channel = try await wait(bootstrap.bind(host: "127.0.0.1", port: 0))
+    self.channel = channel
+    guard let port = channel.localAddress?.port else {
+      throw ValidationError("Unable to determine callback port.")
     }
+    return URL(string: "http://127.0.0.1:\(port)/callback")!
+  }
 
-    private func receiveToken(from connection: NWConnection) {
-      connection.receive(minimumIncompleteLength: 1, maximumLength: 8_192) {
-        [weak self] data, _, _, error in
-        Task {
-          if let error {
-            await self?.finish(with: .failure(error))
-            connection.cancel()
-            return
-          }
-          guard let data, let request = String(data: data, encoding: .utf8) else {
-            await self?.finish(with: .failure(ValidationError("Invalid request.")))
-            connection.cancel()
-            return
-          }
-          let token = Self.token(from: request)
-          if let token {
-            await self?.respond(connection: connection, success: true)
-            await self?.finish(with: .success(token))
-          } else {
-            await self?.respond(connection: connection, success: false)
-            await self?.finish(with: .failure(ValidationError("Missing token in redirect.")))
-          }
-          connection.cancel()
-        }
-      }
-    }
-
-    private func respond(connection: NWConnection, success: Bool) {
-      let message =
-        success
-        ? "You can return to the terminal. Login complete."
-        : "Login failed. Please return to the terminal."
-      let body = "<html><body><p>\(message)</p></body></html>"
-      let response = """
-        HTTP/1.1 200 OK\r
-        Content-Type: text/html; charset=utf-8\r
-        Content-Length: \(body.utf8.count)\r
-        Connection: close\r
-        \r
-        \(body)
-        """
-      connection.send(content: response.data(using: .utf8), completion: .contentProcessed { _ in })
-    }
-
-    private func finish(with result: Result<String, Error>) {
-      tokenContinuation?.resume(with: result)
-      tokenContinuation = nil
-      listener.cancel()
-    }
-
-    private static func token(from request: String) -> String? {
-      return String(
-        request
-          .dropFirst("GET /callback?token=".count)
-          .prefix(while: { $0 != " " })
-      )
+  func waitForToken() async throws -> String {
+    try await withCheckedThrowingContinuation { continuation in
+      tokenContinuation = continuation
     }
   }
-#endif
+
+  private func finish(with result: Result<String, Error>) {
+    tokenContinuation?.resume(with: result)
+    tokenContinuation = nil
+    channel?.close(promise: nil)
+    channel = nil
+    shutdownIfNeeded()
+  }
+
+  private func shutdownIfNeeded() {
+    guard !hasShutdown else { return }
+    hasShutdown = true
+    group.shutdownGracefully { _ in }
+  }
+
+  private func wait<T>(_ future: EventLoopFuture<T>) async throws -> T {
+    try await withUnsafeThrowingContinuation { (continuation: UnsafeContinuation<T, Error>) in
+      future.whenComplete { result in
+        switch result {
+        case .success(let value):
+          nonisolated(unsafe) let value = value
+          continuation.resume(returning: value)
+        case .failure(let error):
+          continuation.resume(throwing: error)
+        }
+      }
+    }
+  }
+}
+
+private final class AuthHTTPHandler: ChannelInboundHandler, @unchecked Sendable {
+  typealias InboundIn = HTTPServerRequestPart
+  typealias OutboundOut = HTTPServerResponsePart
+
+  private let onResult: @Sendable (Result<String, Error>) -> Void
+  private var requestHead: HTTPRequestHead?
+
+  init(onResult: @escaping @Sendable (Result<String, Error>) -> Void) {
+    self.onResult = onResult
+  }
+
+  func channelRead(context: ChannelHandlerContext, data: NIOAny) {
+    let part = unwrapInboundIn(data)
+    switch part {
+    case .head(let head):
+      requestHead = head
+    case .body:
+      break
+    case .end:
+      guard let head = requestHead else { return }
+      if let token = Self.token(from: head.uri) {
+        respond(context: context, success: true)
+        onResult(.success(token))
+      } else {
+        respond(context: context, success: false)
+        onResult(.failure(ValidationError("Missing token in redirect.")))
+      }
+    }
+  }
+
+  private func respond(context: ChannelHandlerContext, success: Bool) {
+    let message =
+      success
+      ? "You can return to the terminal. Login complete."
+      : "Login failed. Please return to the terminal."
+    let body = "<html><body><p>\(message)</p></body></html>"
+    var buffer = context.channel.allocator.buffer(capacity: body.utf8.count)
+    buffer.writeString(body)
+    let head = HTTPResponseHead(
+      version: .http1_1,
+      status: .ok,
+      headers: HTTPHeaders([
+        ("Content-Type", "text/html; charset=utf-8"),
+        ("Content-Length", "\(body.utf8.count)"),
+        ("Connection", "close"),
+      ])
+    )
+    context.write(wrapOutboundOut(.head(head)), promise: nil)
+    context.write(wrapOutboundOut(.body(.byteBuffer(buffer))), promise: nil)
+    context.writeAndFlush(wrapOutboundOut(.end(nil)), promise: nil)
+    context.close(promise: nil)
+  }
+
+  private static func token(from uri: String) -> String? {
+    guard let components = URLComponents(string: "http://localhost\(uri)"),
+          let token = components.queryItems?.first(where: { $0.name == "token" })?.value,
+          !token.isEmpty
+    else { return nil }
+    return token
+  }
+}
