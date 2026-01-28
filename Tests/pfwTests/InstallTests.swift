@@ -109,12 +109,13 @@ extension BaseSuite {
           blob/
             .codex/
               skills/
-                pfw-ComposableArchitecture/
-                  .gitignore "*"
-                  SKILL.md "# Composable Architecture"
+                pfw-ComposableArchitecture@ -> /Users/blob/.pfw/skills/pfw-ComposableArchitecture
             .pfw/
               machine "00000000-0000-0000-0000-000000000002"
               sha "cafebeef"
+              skills/
+                pfw-ComposableArchitecture/
+                  SKILL.md "# Composable Architecture"
               token "deadbeef"
         tmp/
         """
@@ -165,17 +166,18 @@ extension BaseSuite {
             blob/
               .codex/
                 skills/
+                  pfw-ComposableArchitecture@ -> /Users/blob/.pfw/skills/pfw-ComposableArchitecture
+                  pfw-SQLiteData@ -> /Users/blob/.pfw/skills/pfw-SQLiteData
+              .pfw/
+                machine "00000000-0000-0000-0000-000000000001"
+                sha "cafebeef"
+                skills/
                   pfw-ComposableArchitecture/
-                    .gitignore "*"
                     SKILL.md "# Composable Architecture"
                     references/
                       navigation.md "# Navigation"
                   pfw-SQLiteData/
-                    .gitignore "*"
                     SKILL.md "# SQLiteData"
-              .pfw/
-                machine "00000000-0000-0000-0000-000000000001"
-                sha "cafebeef"
                 token "deadbeef"
           tmp/
           """
@@ -222,17 +224,18 @@ extension BaseSuite {
             blob/
               .codex/
                 skills/
+                  pfw-ComposableArchitecture@ -> /Users/blob/.pfw/skills/pfw-ComposableArchitecture
+                  pfw-SQLiteData@ -> /Users/blob/.pfw/skills/pfw-SQLiteData
+              .pfw/
+                machine "00000000-0000-0000-0000-000000000001"
+                sha "cafebeef"
+                skills/
                   pfw-ComposableArchitecture/
-                    .gitignore "*"
                     SKILL.md "# Composable Architecture"
                     references/
                       navigation.md "# Navigation"
                   pfw-SQLiteData/
-                    .gitignore "*"
                     SKILL.md "# SQLiteData"
-              .pfw/
-                machine "00000000-0000-0000-0000-000000000001"
-                sha "cafebeef"
                 token "deadbeef"
           tmp/
           """
@@ -269,17 +272,18 @@ extension BaseSuite {
             blob/
               .codex/
                 skills/
+                  pfw-ComposableArchitecture@ -> /Users/blob/.pfw/skills/pfw-ComposableArchitecture
+                  pfw-SQLiteData@ -> /Users/blob/.pfw/skills/pfw-SQLiteData
+              .pfw/
+                machine "00000000-0000-0000-0000-000000000001"
+                sha "cafebeef"
+                skills/
                   pfw-ComposableArchitecture/
-                    .gitignore "*"
                     SKILL.md "# Composable Architecture"
                     references/
                       navigation.md "# Navigation"
                   pfw-SQLiteData/
-                    .gitignore "*"
                     SKILL.md "# SQLiteData"
-              .pfw/
-                machine "00000000-0000-0000-0000-000000000001"
-                sha "cafebeef"
                 token "deadbeef"
           tmp/
           """
@@ -298,17 +302,18 @@ extension BaseSuite {
             blob/
               .claude/
                 skills/
+                  pfw-ComposableArchitecture@ -> /Users/blob/.pfw/skills/pfw-ComposableArchitecture
+                  pfw-SQLiteData@ -> /Users/blob/.pfw/skills/pfw-SQLiteData
+              .pfw/
+                machine "00000000-0000-0000-0000-000000000001"
+                sha "cafebeef"
+                skills/
                   pfw-ComposableArchitecture/
-                    .gitignore "*"
                     SKILL.md "# Composable Architecture"
                     references/
                       navigation.md "# Navigation"
                   pfw-SQLiteData/
-                    .gitignore "*"
                     SKILL.md "# SQLiteData"
-              .pfw/
-                machine "00000000-0000-0000-0000-000000000001"
-                sha "cafebeef"
                 token "deadbeef"
           tmp/
           """
@@ -326,17 +331,18 @@ extension BaseSuite {
           Users/
             blob/
               .codex/
-                pfw-ComposableArchitecture/
-                  .gitignore "*"
-                  SKILL.md "# Composable Architecture"
-                  references/
-                    navigation.md "# Navigation"
-                pfw-SQLiteData/
-                  .gitignore "*"
-                  SKILL.md "# SQLiteData"
+                pfw-ComposableArchitecture@ -> /Users/blob/.pfw/skills/pfw-ComposableArchitecture
+                pfw-SQLiteData@ -> /Users/blob/.pfw/skills/pfw-SQLiteData
               .pfw/
                 machine "00000000-0000-0000-0000-000000000001"
                 sha "cafebeef"
+                skills/
+                  pfw-ComposableArchitecture/
+                    SKILL.md "# Composable Architecture"
+                    references/
+                      navigation.md "# Navigation"
+                  pfw-SQLiteData/
+                    SKILL.md "# SQLiteData"
                 token "deadbeef"
           tmp/
           """
@@ -368,17 +374,18 @@ extension BaseSuite {
               .copilot/
                 skills/
                   dont-delete.md "Hello"
+                  pfw-ComposableArchitecture@ -> /Users/blob/.pfw/skills/pfw-ComposableArchitecture
+                  pfw-SQLiteData@ -> /Users/blob/.pfw/skills/pfw-SQLiteData
+              .pfw/
+                machine "00000000-0000-0000-0000-000000000001"
+                sha "cafebeef"
+                skills/
                   pfw-ComposableArchitecture/
-                    .gitignore "*"
                     SKILL.md "# Composable Architecture"
                     references/
                       navigation.md "# Navigation"
                   pfw-SQLiteData/
-                    .gitignore "*"
                     SKILL.md "# SQLiteData"
-              .pfw/
-                machine "00000000-0000-0000-0000-000000000001"
-                sha "cafebeef"
                 token "deadbeef"
           tmp/
           """
