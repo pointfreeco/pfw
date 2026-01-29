@@ -8,45 +8,45 @@ struct Install: AsyncParsableCommand {
   )
 
   enum Tool: String, CaseIterable, ExpressibleByArgument {
-    case codex
-    case claude
-    case cursor
-    case copilot
-    case kiro
-    case gemini
-    case antigravity
-    case opencode
-    case kimi
-    case droid
-    case amp
     case agents
+    case amp
+    case antigravity
+    case claude
+    case codex
+    case copilot
+    case cursor
+    case droid
+    case gemini
+    case kiro
+    case kimi
+    case opencode
 
     var defaultInstallPath: URL {
       @Dependency(\.fileSystem) var fileSystem
       let home = fileSystem.homeDirectoryForCurrentUser
 
       switch self {
+      case .amp:
+        return
+          home
+          .appending(path: ".agents")
+          .appending(path: "skills")
       case .antigravity:
         return
           home
           .appending(path: ".gemini")
           .appending(path: "antigravity")
           .appending(path: "global_skills")
-      case .opencode:
-        return
-          home
-          .appending(path: ".config")
-          .appending(path: "opencode")
-          .appending(path: "skills")
       case .droid:
         return
           home
           .appending(path: ".factory")
           .appending(path: "skills")
-      case .amp:
+      case .opencode:
         return
           home
-          .appending(path: ".agents")
+          .appending(path: ".config")
+          .appending(path: "opencode")
           .appending(path: "skills")
       default:
         return

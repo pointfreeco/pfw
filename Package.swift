@@ -16,7 +16,7 @@ let package = Package(
     .package(url: "https://github.com/pointfreeco/swift-concurrency-extras", from: "1.0.0"),
     .package(url: "https://github.com/pointfreeco/swift-custom-dump", from: "1.0.0"),
     .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.0.0"),
-    .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", branch: "1.18.8"),
+    .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.18.9"),
     .package(url: "https://github.com/weichsel/ZIPFoundation", from: "0.9.20"),
   ],
   targets: [
