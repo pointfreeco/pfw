@@ -12,6 +12,7 @@ struct PFW: AsyncParsableCommand {
       Login.self,
       Logout.self,
       Status.self,
+      List.self,
       Install.self,
     ]
   )
