@@ -129,19 +129,18 @@ private final class AuthHTTPHandler: ChannelInboundHandler, @unchecked Sendable 
   }
 
   private func respond(context: ChannelHandlerContext, success: Bool) {
-    let message =
+    let body =
       success
-      ? "You can return to the terminal. Login complete."
-      : "Login failed. Please return to the terminal."
-    let body = "<html><body><p>\(message)</p></body></html>"
-    var buffer = context.channel.allocator.buffer(capacity: body.utf8.count)
-    buffer.writeString(body)
+      ? try! Data(contentsOf: Bundle.module.url(forResource: "index", withExtension: "html")!)
+      : Data("<html><body><p>Login failed.</p></body></html>".utf8)
+    var buffer = context.channel.allocator.buffer(capacity: body.count)
+    buffer.writeBytes(body)
     let head = HTTPResponseHead(
       version: .http1_1,
       status: .ok,
       headers: HTTPHeaders([
         ("Content-Type", "text/html; charset=utf-8"),
-        ("Content-Length", "\(body.utf8.count)"),
+        ("Content-Length", "\(body.count)"),
         ("Connection", "close"),
       ])
     )
