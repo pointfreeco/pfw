@@ -155,7 +155,6 @@ struct Install: AsyncParsableCommand {
     let zipURL = type(of: fileSystem).temporaryDirectory.appending(path: uuid().uuidString + ".zip")
     let tempUnzipURL = type(of: fileSystem).temporaryDirectory.appending(path: uuid().uuidString)
     let centralSkillsURL = pfwDirectoryURL.appendingPathComponent("skills", isDirectory: true)
-    let skillsSourceURL = tempUnzipURL.appendingPathComponent("skills")
     if !symlinkExistingSkills {
       guard let data else {
         print("Unexpected error. Could not download skills.")
@@ -166,6 +165,15 @@ struct Install: AsyncParsableCommand {
       try fileSystem.createDirectory(at: tempUnzipURL, withIntermediateDirectories: true)
       try fileSystem.unzipItem(at: zipURL, to: tempUnzipURL)
 
+<<<<<<< HEAD
+    let skillDirectories = (try? fileSystem.contentsOfDirectory(at: skillsSourceURL)) ?? []
+    for directory in skillDirectories {
+      guard directory.lastPathComponent != "commit-messages.txt"
+      else { continue }
+      let centralDestination = centralSkillsURL.appendingPathComponent(directory.lastPathComponent)
+      try fileSystem.moveItem(at: directory, to: centralDestination)
+=======
+      let skillsSourceURL = tempUnzipURL.appendingPathComponent("skills")
       guard fileSystem.fileExists(atPath: skillsSourceURL.path)
       else {
         print("Could not unzip skills.")
@@ -182,8 +190,6 @@ struct Install: AsyncParsableCommand {
 
       let skillDirectories = (try? fileSystem.contentsOfDirectory(at: skillsSourceURL)) ?? []
       for directory in skillDirectories {
-      guard directory.lastPathComponent != "commit-messages.json"
-      else { continue }
         let centralDestination = centralSkillsURL.appendingPathComponent(
           directory.lastPathComponent)
         try fileSystem.moveItem(at: directory, to: centralDestination)
@@ -191,6 +197,7 @@ struct Install: AsyncParsableCommand {
     } else if !fileSystem.fileExists(atPath: centralSkillsURL.path) {
       print("Skills are unexpectedly missing. Re-download with --force.")
       throw ExitCode.failure
+>>>>>>> origin/main
     }
 
     print("Installed skills:")
@@ -218,21 +225,22 @@ struct Install: AsyncParsableCommand {
         let toolDestination = skillsURL.appendingPathComponent("pfw-\(directory.lastPathComponent)")
         try fileSystem.createSymbolicLink(at: toolDestination, withDestinationURL: directory)
       }
+<<<<<<< HEAD
       if let tool = target.tool {
         print("  • \(tool.rawValue): \(skillsURL.path)")
       } else {
         print("  • \(skillsURL.path)")
       }
+=======
+      print("Linked to \(skillsURL.path)")
+>>>>>>> origin/main
     }
 
-    let commitMessagesURL = skillsSourceURL.appendingPathComponent("commit-messages.json")
-    if
-      let commitMessages = loadCommitMessages(from: commitMessagesURL, fileSystem: fileSystem),
-      !commitMessages.isEmpty
-    {
+    let commitMessagesURL = skillsSourceURL.appendingPathComponent("commit-messages.txt")
+    if let commitMessages = loadCommitMessages(from: commitMessagesURL, fileSystem: fileSystem) {
       print("")
       print("Changes since last install:")
-      print(commitMessages.map { "  • \($0)" }.joined(separator: "\n"))
+      print(commitMessages.split(separator: "\n").map { "  \($0)" }.joined(separator: "\n"))
     }
 
     try? fileSystem.removeItem(at: zipURL)
@@ -243,7 +251,9 @@ struct Install: AsyncParsableCommand {
 private func loadCommitMessages(
   from url: URL,
   fileSystem: any FileSystem
-) -> [String]? {
+) -> String? {
   guard let data = try? fileSystem.data(at: url) else { return nil }
-  return try? JSONDecoder().decode([String].self, from: data)
+  let contents = String(decoding: data, as: UTF8.self)
+    .trimmingCharacters(in: .whitespacesAndNewlines)
+  return contents.isEmpty ? nil : contents
 }

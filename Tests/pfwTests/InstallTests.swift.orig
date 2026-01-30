@@ -80,8 +80,12 @@ extension BaseSuite {
           Waiting for browser redirect...
           Saved token to /Users/blob/.pfw/token.
           Login complete. Retrying install...
+<<<<<<< HEAD
           Installed skills:
             • codex: /Users/blob/.codex/skills
+=======
+          Linked to /Users/blob/.codex/skills
+>>>>>>> origin/main
           """
         }
       }
@@ -148,8 +152,12 @@ extension BaseSuite {
       @Test func codex() async throws {
         try await assertCommand(["install", "--tool", "codex"]) {
           """
+<<<<<<< HEAD
           Installed skills:
             • codex: /Users/blob/.codex/skills
+=======
+          Linked to /Users/blob/.codex/skills
+>>>>>>> origin/main
           """
         }
         assertInlineSnapshot(of: fileSystem, as: .description) {
@@ -203,8 +211,7 @@ extension BaseSuite {
         try await assertCommand(["install", "--tool", "codex"]) {
           """
           Skills up-to-date.
-          Installed skills:
-            • codex: /Users/blob/.codex/skills
+          Linked to /Users/blob/.codex/skills
           """
         }
 
@@ -233,9 +240,14 @@ extension BaseSuite {
       @Test func multipleTools() async throws {
         try await assertCommand(["install", "--tool", "codex", "--tool", "claude"]) {
           """
+<<<<<<< HEAD
           Installed skills:
             • codex: /Users/blob/.codex/skills
             • claude: /Users/blob/.claude/skills
+=======
+          Linked to /Users/blob/.codex/skills
+          Linked to /Users/blob/.claude/skills
+>>>>>>> origin/main
           """
         }
         assertInlineSnapshot(of: fileSystem, as: .description) {
@@ -312,8 +324,12 @@ extension BaseSuite {
 
         try await assertCommand(["install", "--tool", "codex"]) {
           """
+<<<<<<< HEAD
           Installed skills:
             • codex: /Users/blob/.codex/skills
+=======
+          Linked to /Users/blob/.codex/skills
+>>>>>>> origin/main
           """
         }
         assertInlineSnapshot(of: fileSystem, as: .description) {
@@ -361,8 +377,12 @@ extension BaseSuite {
 
         try await assertCommand(["install", "--tool", "codex"]) {
           """
+<<<<<<< HEAD
           Installed skills:
             • codex: /Users/blob/.codex/skills
+=======
+          Linked to /Users/blob/.codex/skills
+>>>>>>> origin/main
           """
         }
         assertInlineSnapshot(of: fileSystem, as: .description) {
@@ -392,8 +412,12 @@ extension BaseSuite {
       @Test func claude() async throws {
         try await assertCommand(["install", "--tool", "claude"]) {
           """
+<<<<<<< HEAD
           Installed skills:
             • claude: /Users/blob/.claude/skills
+=======
+          Linked to /Users/blob/.claude/skills
+>>>>>>> origin/main
           """
         }
         assertInlineSnapshot(of: fileSystem, as: .description) {
@@ -423,8 +447,12 @@ extension BaseSuite {
       @Test func cursor() async throws {
         try await assertCommand(["install", "--tool", "cursor"]) {
           """
+<<<<<<< HEAD
           Installed skills:
             • cursor: /Users/blob/.cursor/skills
+=======
+          Linked to /Users/blob/.cursor/skills
+>>>>>>> origin/main
           """
         }
         assertInlineSnapshot(of: fileSystem, as: .description) {
@@ -454,8 +482,12 @@ extension BaseSuite {
       @Test func copilot() async throws {
         try await assertCommand(["install", "--tool", "copilot"]) {
           """
+<<<<<<< HEAD
           Installed skills:
             • copilot: /Users/blob/.copilot/skills
+=======
+          Linked to /Users/blob/.copilot/skills
+>>>>>>> origin/main
           """
         }
         assertInlineSnapshot(of: fileSystem, as: .description) {
@@ -485,8 +517,12 @@ extension BaseSuite {
       @Test func kiro() async throws {
         try await assertCommand(["install", "--tool", "kiro"]) {
           """
+<<<<<<< HEAD
           Installed skills:
             • kiro: /Users/blob/.kiro/skills
+=======
+          Linked to /Users/blob/.kiro/skills
+>>>>>>> origin/main
           """
         }
         assertInlineSnapshot(of: fileSystem, as: .description) {
@@ -516,8 +552,12 @@ extension BaseSuite {
       @Test func gemini() async throws {
         try await assertCommand(["install", "--tool", "gemini"]) {
           """
+<<<<<<< HEAD
           Installed skills:
             • gemini: /Users/blob/.gemini/skills
+=======
+          Linked to /Users/blob/.gemini/skills
+>>>>>>> origin/main
           """
         }
         assertInlineSnapshot(of: fileSystem, as: .description) {
@@ -547,8 +587,12 @@ extension BaseSuite {
       @Test func antigravity() async throws {
         try await assertCommand(["install", "--tool", "antigravity"]) {
           """
+<<<<<<< HEAD
           Installed skills:
             • antigravity: /Users/blob/.gemini/antigravity/global_skills
+=======
+          Linked to /Users/blob/.gemini/antigravity/global_skills
+>>>>>>> origin/main
           """
         }
         assertInlineSnapshot(of: fileSystem, as: .description) {
@@ -579,8 +623,12 @@ extension BaseSuite {
       @Test func opencode() async throws {
         try await assertCommand(["install", "--tool", "opencode"]) {
           """
+<<<<<<< HEAD
           Installed skills:
             • opencode: /Users/blob/.config/opencode/skills
+=======
+          Linked to /Users/blob/.config/opencode/skills
+>>>>>>> origin/main
           """
         }
         assertInlineSnapshot(of: fileSystem, as: .description) {
@@ -611,8 +659,12 @@ extension BaseSuite {
       @Test func kimi() async throws {
         try await assertCommand(["install", "--tool", "kimi"]) {
           """
+<<<<<<< HEAD
           Installed skills:
             • kimi: /Users/blob/.kimi/skills
+=======
+          Linked to /Users/blob/.kimi/skills
+>>>>>>> origin/main
           """
         }
         assertInlineSnapshot(of: fileSystem, as: .description) {
@@ -642,8 +694,12 @@ extension BaseSuite {
       @Test func droid() async throws {
         try await assertCommand(["install", "--tool", "droid"]) {
           """
+<<<<<<< HEAD
           Installed skills:
             • droid: /Users/blob/.factory/skills
+=======
+          Linked to /Users/blob/.factory/skills
+>>>>>>> origin/main
           """
         }
         assertInlineSnapshot(of: fileSystem, as: .description) {
@@ -673,8 +729,12 @@ extension BaseSuite {
       @Test func amp() async throws {
         try await assertCommand(["install", "--tool", "amp"]) {
           """
+<<<<<<< HEAD
           Installed skills:
             • amp: /Users/blob/.agents/skills
+=======
+          Linked to /Users/blob/.agents/skills
+>>>>>>> origin/main
           """
         }
         assertInlineSnapshot(of: fileSystem, as: .description) {
@@ -704,8 +764,12 @@ extension BaseSuite {
       @Test func agents() async throws {
         try await assertCommand(["install", "--tool", "agents"]) {
           """
+<<<<<<< HEAD
           Installed skills:
             • agents: /Users/blob/.agents/skills
+=======
+          Linked to /Users/blob/.agents/skills
+>>>>>>> origin/main
           """
         }
         assertInlineSnapshot(of: fileSystem, as: .description) {
@@ -735,8 +799,12 @@ extension BaseSuite {
       @Test func tildePath() async throws {
         try await assertCommand(["install", "--path", "~/.codex"]) {
           """
+<<<<<<< HEAD
           Installed skills:
             • /Users/blob/.codex
+=======
+          Linked to /Users/blob/.codex
+>>>>>>> origin/main
           """
         }
         assertInlineSnapshot(of: fileSystem, as: .description) {
@@ -777,9 +845,14 @@ extension BaseSuite {
       func autodetectTools() async throws {
         try await assertCommand(["install"]) {
           """
+<<<<<<< HEAD
           Installed skills:
             • codex: /Users/blob/.codex/skills
             • cursor: /Users/blob/.cursor/skills
+=======
+          Linked to /Users/blob/.codex/skills
+          Linked to /Users/blob/.cursor/skills
+>>>>>>> origin/main
           """
         }
       }
@@ -789,9 +862,14 @@ extension BaseSuite {
           "install", "--path", "~/.codex", "--path", "/Users/blob/.copilot/skills",
         ]) {
           """
+<<<<<<< HEAD
           Installed skills:
             • /Users/blob/.codex
             • /Users/blob/.copilot/skills
+=======
+          Linked to /Users/blob/.codex
+          Linked to /Users/blob/.copilot/skills
+>>>>>>> origin/main
           """
         }
       }
@@ -801,9 +879,14 @@ extension BaseSuite {
           "install", "--tool", "codex", "--path", "/Users/blob/.copilot/skills",
         ]) {
           """
+<<<<<<< HEAD
           Installed skills:
             • codex: /Users/blob/.codex/skills
             • /Users/blob/.copilot/skills
+=======
+          Linked to /Users/blob/.codex/skills
+          Linked to /Users/blob/.copilot/skills
+>>>>>>> origin/main
           """
         }
       }
@@ -823,8 +906,12 @@ extension BaseSuite {
       func customPath() async throws {
         try await assertCommand(["install", "--path", "/Users/blob/.copilot/skills"]) {
           """
+<<<<<<< HEAD
           Installed skills:
             • /Users/blob/.copilot/skills
+=======
+          Linked to /Users/blob/.copilot/skills
+>>>>>>> origin/main
           """
         }
         assertInlineSnapshot(of: fileSystem, as: .description) {
@@ -863,12 +950,10 @@ extension BaseSuite {
                     # Composable Architecture
                     """.utf8
                   ),
-                  URL(filePath: "/skills/commit-messages.json"): Data(
+                  URL(filePath: "/skills/commit-messages.txt"): Data(
                     """
-                    [
-                      "Added database migration guidance",
-                      "Added TCA2.0"
-                    ]
+                    - Added database migration guidance
+                    - Added TCA2.0
                     """.utf8
                   ),
                 ].toData,
@@ -885,8 +970,8 @@ extension BaseSuite {
             • codex: /Users/blob/.codex/skills
           
           Changes since last install:
-            • Added database migration guidance
-            • Added TCA2.0
+            - Added database migration guidance
+            - Added TCA2.0
           """
         }
       }
