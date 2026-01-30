@@ -29,7 +29,7 @@ A CLI tool for downloading and managing [Point-Free Way](https://www.pointfree.c
 | Tool | Install Path |
 |------|--------------|
 | Agents (generic) | `~/.agents/skills` |
-| [Amp](https://ampcode.com/manual#agent-skills) | `~/.amp/skills` |
+| [Amp](https://ampcode.com/manual#agent-skills) | `~/.agents/skills` |
 | [Antigravity](https://antigravity.google/docs/skills) | `~/.gemini/antigravity/global_skills` |
 | [Claude](https://code.claude.com/docs/en/skills) | `~/.claude/skills` |
 | [Codex](https://developers.openai.com/codex/skills/) | `~/.codex/skills` |
