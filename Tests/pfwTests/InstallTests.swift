@@ -809,10 +809,10 @@ extension BaseSuite {
                     # Composable Architecture
                     """.utf8
                   ),
-                  URL(filePath: "/commit-messages.txt"): Data(
+                  URL(filePath: "/skills/commit-messages.txt"): Data(
                     """
-                    - Added new skills for January
-                    - Updated navigation guidance
+                    - Added database migration guidance
+                    - Added TCA2.0
                     """.utf8
                   ),
                 ].toData,
@@ -827,6 +827,10 @@ extension BaseSuite {
           """
           Installed skills:
             • codex: /Users/blob/.codex/skills
+          
+          Changes since last install:
+            - Added database migration guidance
+            - Added TCA2.0
           """
         }
       }
