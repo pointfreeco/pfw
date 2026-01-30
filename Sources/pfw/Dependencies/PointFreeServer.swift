@@ -38,6 +38,7 @@ struct LivePointFreeServer: PointFreeServer {
         "\(URL.baseURL)/account/the-way/download?token=\(token)&machine=\(machine)&whoami=\(whoami)"
     )!
     var request = URLRequest(url: url)
+    request.setValue(PFW.configuration.version, forHTTPHeaderField: "X-PFW-Version")
     if let sha, !sha.isEmpty {
       request.setValue(sha, forHTTPHeaderField: "If-None-Match")
     }
