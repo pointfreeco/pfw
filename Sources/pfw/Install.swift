@@ -106,7 +106,8 @@ struct Install: AsyncParsableCommand {
     let token = try loadToken()
     let machine = try machine()
     let sha = force ? nil : loadSHA()
-    let data: Data
+    let data: Data?
+    var symlinkExistingSkills = false
     do {
       let response = try await pointFreeServer.downloadSkills(
         token: token,
@@ -119,8 +120,9 @@ struct Install: AsyncParsableCommand {
         data = downloadedData
         try save(sha: etag)
       case .notModified:
-        print("Skills already up to date.")
-        return
+        print("Skills up-to-date.")
+        data = nil
+        symlinkExistingSkills = true
       }
     } catch let error as PointFreeServerError {
       switch error {
@@ -151,32 +153,41 @@ struct Install: AsyncParsableCommand {
     }
 
     let zipURL = type(of: fileSystem).temporaryDirectory.appending(path: uuid().uuidString + ".zip")
-    try fileSystem.write(data, to: zipURL)
-
     let tempUnzipURL = type(of: fileSystem).temporaryDirectory.appending(path: uuid().uuidString)
-    try fileSystem.createDirectory(at: tempUnzipURL, withIntermediateDirectories: true)
-    try fileSystem.unzipItem(at: zipURL, to: tempUnzipURL)
-
-    let skillsSourceURL = tempUnzipURL.appendingPathComponent("skills")
-    guard fileSystem.fileExists(atPath: skillsSourceURL.path)
-    else {
-      print("Could not unzip skills.")
-      throw ExitCode.failure
-    }
-
     let centralSkillsURL = pfwDirectoryURL.appendingPathComponent("skills", isDirectory: true)
-    try? fileSystem.removeItem(at: centralSkillsURL)
-    try fileSystem.createDirectory(at: centralSkillsURL, withIntermediateDirectories: true)
+    if !symlinkExistingSkills {
+      guard let data else {
+        print("Unexpected error. Could not download skills.")
+        throw ExitCode.failure
+      }
+      try fileSystem.write(data, to: zipURL)
 
-    let existingCentral = (try? fileSystem.contentsOfDirectory(at: centralSkillsURL)) ?? []
-    for url in existingCentral where url.lastPathComponent.hasPrefix("pfw-") {
-      try? fileSystem.removeItem(at: url)
-    }
+      try fileSystem.createDirectory(at: tempUnzipURL, withIntermediateDirectories: true)
+      try fileSystem.unzipItem(at: zipURL, to: tempUnzipURL)
 
-    let skillDirectories = (try? fileSystem.contentsOfDirectory(at: skillsSourceURL)) ?? []
-    for directory in skillDirectories {
-      let centralDestination = centralSkillsURL.appendingPathComponent(directory.lastPathComponent)
-      try fileSystem.moveItem(at: directory, to: centralDestination)
+      let skillsSourceURL = tempUnzipURL.appendingPathComponent("skills")
+      guard fileSystem.fileExists(atPath: skillsSourceURL.path)
+      else {
+        print("Could not unzip skills.")
+        throw ExitCode.failure
+      }
+
+      try? fileSystem.removeItem(at: centralSkillsURL)
+      try fileSystem.createDirectory(at: centralSkillsURL, withIntermediateDirectories: true)
+
+      let existingCentral = (try? fileSystem.contentsOfDirectory(at: centralSkillsURL)) ?? []
+      for url in existingCentral where url.lastPathComponent.hasPrefix("pfw-") {
+        try? fileSystem.removeItem(at: url)
+      }
+
+      let skillDirectories = (try? fileSystem.contentsOfDirectory(at: skillsSourceURL)) ?? []
+      for directory in skillDirectories {
+        let centralDestination = centralSkillsURL.appendingPathComponent(directory.lastPathComponent)
+        try fileSystem.moveItem(at: directory, to: centralDestination)
+      }
+    } else if !fileSystem.fileExists(atPath: centralSkillsURL.path) {
+      print("Skills are unexpectedly missing. Re-download with --force.")
+      throw ExitCode.failure
     }
 
     for target in installTargets {
@@ -203,11 +214,7 @@ struct Install: AsyncParsableCommand {
         let toolDestination = skillsURL.appendingPathComponent("pfw-\(directory.lastPathComponent)")
         try fileSystem.createSymbolicLink(at: toolDestination, withDestinationURL: directory)
       }
-      if let tool = target.tool {
-        print("Installed skills for \(tool.rawValue) into \(skillsURL.path)")
-      } else {
-        print("Installed skills into \(skillsURL.path)")
-      }
+      print("Linked to \(skillsURL.path)")
     }
 
     try? fileSystem.removeItem(at: zipURL)
