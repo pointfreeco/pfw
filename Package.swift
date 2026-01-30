@@ -31,9 +31,6 @@ let package = Package(
         .product(name: "NIOHTTP1", package: "swift-nio"),
         .product(name: "ZIPFoundation", package: "ZIPFoundation"),
       ],
-      resources: [
-        .process("Resources")
-      ],
       swiftSettings: [
         .enableUpcomingFeature("NonisolatedNonsendingByDefault")
       ]
