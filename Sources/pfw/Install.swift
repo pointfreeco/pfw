@@ -175,10 +175,13 @@ struct Install: AsyncParsableCommand {
 
     let skillDirectories = (try? fileSystem.contentsOfDirectory(at: skillsSourceURL)) ?? []
     for directory in skillDirectories {
+      guard directory.lastPathComponent != "commit-messages.txt"
+      else { continue }
       let centralDestination = centralSkillsURL.appendingPathComponent(directory.lastPathComponent)
       try fileSystem.moveItem(at: directory, to: centralDestination)
     }
 
+    print("Installed skills:")
     for target in installTargets {
       let expandedPath: String
       if target.path.hasPrefix("~/") {
@@ -204,13 +207,30 @@ struct Install: AsyncParsableCommand {
         try fileSystem.createSymbolicLink(at: toolDestination, withDestinationURL: directory)
       }
       if let tool = target.tool {
-        print("Installed skills for \(tool.rawValue) into \(skillsURL.path)")
+        print("  • \(tool.rawValue): \(skillsURL.path)")
       } else {
-        print("Installed skills into \(skillsURL.path)")
+        print("  • \(skillsURL.path)")
       }
+    }
+
+    let commitMessagesURL = skillsSourceURL.appendingPathComponent("commit-messages.txt")
+    if let commitMessages = loadCommitMessages(from: commitMessagesURL, fileSystem: fileSystem) {
+      print("")
+      print("Changes since last install:")
+      print(commitMessages.split(separator: "\n").map { "  \($0)" }.joined(separator: "\n"))
     }
 
     try? fileSystem.removeItem(at: zipURL)
     try? fileSystem.removeItem(at: tempUnzipURL)
   }
+}
+
+private func loadCommitMessages(
+  from url: URL,
+  fileSystem: any FileSystem
+) -> String? {
+  guard let data = try? fileSystem.data(at: url) else { return nil }
+  let contents = String(decoding: data, as: UTF8.self)
+    .trimmingCharacters(in: .whitespacesAndNewlines)
+  return contents.isEmpty ? nil : contents
 }
