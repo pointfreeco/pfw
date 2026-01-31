@@ -24,6 +24,36 @@ A CLI tool for downloading and managing [Point-Free Way](https://www.pointfree.c
     $ pfw install --tool codex
     ```
 
+## Upgrade
+
+To upgrade to the latest version of the CLI:
+
+1. **Check your current version**
+
+    ```sh
+    $ pfw --version
+    ```
+
+2. **Upgrade the CLI**
+
+    ```sh
+    $ brew upgrade pfw
+    ```
+
+3. **Verify the new version**
+
+    ```sh
+    $ pfw --version
+    ```
+
+4. **Re-install the skills**
+
+    After upgrading, re-install the skills to ensure you have the latest versions:
+
+    ```sh
+    $ pfw install --tool codex
+    ```
+
 ## Supported AI Tools
 
 | Tool | Install Path |
