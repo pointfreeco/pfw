@@ -79,19 +79,14 @@ struct Install: AsyncParsableCommand {
   var force = false
 
   func run() async throws {
+    @Dependency(\.gitHub) var gitHub
+
     try await install(shouldRetryAfterLogin: true)
     do {
-      let (data, _) = try await URLSession.shared.data(
-        from: URL(string: "https://api.github.com/repos/pointfreeco/homebrew-tap/tags")!
-      )
-      struct Tag: Codable {
-        var name: String
-      }
-      let tags = try JSONDecoder().decode([Tag].self, from: data)
+      let tags = try await gitHub.fetchTags(owner: "pointfreeco", repo: "homebrew-tap")
       let mostRecentTag = tags
-        .first { $0.name.hasPrefix("pfw-") }?
-        .name
-        .dropFirst(4)
+        .first { $0.name.hasPrefix("pfw-") }
+        .map { String($0.name.dropFirst(4)) }
       if let mostRecentTag, mostRecentTag != PFW.configuration.version {
         print(
           """

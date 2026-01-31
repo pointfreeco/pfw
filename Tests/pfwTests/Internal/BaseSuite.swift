@@ -13,6 +13,7 @@ import Testing
     $0.fileSystem = InMemoryFileSystem()
     $0.openInBrowser = MockOpenInBrowser()
     $0.pointFreeServer = InMemoryPointFreeServer(result: .failure(.invalidResponse))
+    $0.gitHub = InMemoryGitHub(tags: [])
     $0.whoAmI = TestWhoAmI("blob")
   }
 )

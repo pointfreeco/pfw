@@ -15,6 +15,7 @@ extension BaseSuite {
         token: "deadbeef"
       )
       $0.continuousClock = TestClock()
+      $0.gitHub = InMemoryGitHub(tags: [])
     }
   )
   @MainActor struct InstallTests {
@@ -172,6 +173,24 @@ extension BaseSuite {
                     SKILL.md "# SQLiteData"
                 token "deadbeef"
           tmp/
+          """
+        }
+      }
+
+      @Test(
+        .dependencies {
+          $0.gitHub = InMemoryGitHub(tags: [
+            GitHubTag(name: "pfw-9999.0.0"),
+          ])
+        }
+      )
+      func mostRecentTagAvailable() async throws {
+        try await assertCommand(["install", "--tool", "codex"]) {
+          """
+          Installed skills:
+            • codex: /Users/blob/.codex/skills
+
+          pfw 9999.0.0 is available. Run 'brew update && brew upgrade pfw' to install.
           """
         }
       }
