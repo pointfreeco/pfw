@@ -33,7 +33,7 @@ extension BaseSuite {
     @Test func loggedOut() async throws {
       await assertCommandThrows(["install", "--tool", "codex"]) {
         """
-        No token found. Run `pfw login` first.
+        No token found. Run 'pfw login' first.
         """
       }
     }

@@ -40,7 +40,7 @@ func save(token: String) throws {
 func loadToken() throws -> String {
   @Dependency(\.fileSystem) var fileSystem
   guard fileSystem.fileExists(atPath: tokenURL.path) else {
-    throw ValidationError("No token found. Run `pfw login` first.")
+    throw ValidationError("No token found. Run 'pfw login' first.")
   }
   return try String(decoding: fileSystem.data(at: tokenURL), as: UTF8.self)
 }

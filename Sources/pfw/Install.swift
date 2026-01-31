@@ -80,6 +80,28 @@ struct Install: AsyncParsableCommand {
 
   func run() async throws {
     try await install(shouldRetryAfterLogin: true)
+    do {
+      let (data, _) = try await URLSession.shared.data(
+        from: URL(string: "https://api.github.com/repos/pointfreeco/homebrew-tap/tags")!
+      )
+      struct Tag: Codable {
+        var name: String
+      }
+      let tags = try JSONDecoder().decode([Tag].self, from: data)
+      let mostRecentTag = tags
+        .first { $0.name.hasPrefix("pfw-") }?
+        .name
+        .dropFirst(4)
+      if let mostRecentTag, mostRecentTag != PFW.configuration.version {
+        print(
+          """
+          
+          pfw \(mostRecentTag) is available. Run 'brew update && brew upgrade pfw' to install.
+          """
+        )
+      }
+    } catch {
+    }
   }
 
   private func install(shouldRetryAfterLogin: Bool) async throws {

@@ -13,7 +13,7 @@ struct List: ParsableCommand {
     let centralSkillsURL = pfwDirectoryURL.appendingPathComponent("skills", isDirectory: true)
 
     guard fileSystem.fileExists(atPath: centralSkillsURL.path) else {
-      print("No skills installed. Run `pfw install` first.")
+      print("No skills installed. Run 'pfw install' first.")
       return
     }
 
@@ -24,7 +24,7 @@ struct List: ParsableCommand {
       .sorted()
 
     if skills.isEmpty {
-      print("No skills installed. Run `pfw install` first.")
+      print("No skills installed. Run 'pfw install' first.")
       return
     }
 

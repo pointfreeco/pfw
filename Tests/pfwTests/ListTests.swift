@@ -12,7 +12,7 @@ extension BaseSuite {
     @Test func noSkillsDirectory() async throws {
       try await assertCommand(["list"]) {
         """
-        No skills installed. Run `pfw install` first.
+        No skills installed. Run 'pfw install' first.
         """
       }
     }
@@ -24,7 +24,7 @@ extension BaseSuite {
       )
       try await assertCommand(["list"]) {
         """
-        No skills installed. Run `pfw install` first.
+        No skills installed. Run 'pfw install' first.
         """
       }
     }
