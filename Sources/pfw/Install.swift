@@ -20,6 +20,8 @@ struct Install: AsyncParsableCommand {
     case kiro
     case kimi
     case opencode
+    case xcodeClaude
+    case xcodeCodex
 
     var defaultInstallPath: URL {
       @Dependency(\.fileSystem) var fileSystem
@@ -27,32 +29,21 @@ struct Install: AsyncParsableCommand {
 
       switch self {
       case .amp:
-        return
-          home
-          .appending(path: ".agents")
-          .appending(path: "skills")
+        return home.appending(path: ".agents/skills")
       case .antigravity:
-        return
-          home
-          .appending(path: ".gemini")
-          .appending(path: "antigravity")
-          .appending(path: "global_skills")
+        return home.appending(path: ".gemini/antigravity/global_skills")
       case .droid:
-        return
-          home
-          .appending(path: ".factory")
-          .appending(path: "skills")
+        return home.appending(path: ".factory/skills")
       case .opencode:
-        return
-          home
-          .appending(path: ".config")
-          .appending(path: "opencode")
-          .appending(path: "skills")
+        return home.appending(path: ".config/opencode/skills")
+      case .xcodeClaude:
+        return home.appending(
+          path: "Library/Developer/Xcode/CodingAssistent/ClaudeAfentConfig/skills"
+        )
+      case .xcodeCodex:
+        return home.appending(path: "Library/Developer/Xcode/CodingAssistent/codex/skills")
       default:
-        return
-          home
-          .appending(path: ".\(rawValue)")
-          .appending(path: "skills")
+        return home.appending(path: ".\(rawValue)/skills")
       }
     }
   }
@@ -203,7 +194,8 @@ struct Install: AsyncParsableCommand {
         guard directory.lastPathComponent != "commit-messages.json"
         else { continue }
         let centralDestination = centralSkillsURL.appendingPathComponent(
-          directory.lastPathComponent)
+          directory.lastPathComponent
+        )
         try fileSystem.moveItem(at: directory, to: centralDestination)
       }
     } else if !fileSystem.fileExists(atPath: centralSkillsURL.path) {
