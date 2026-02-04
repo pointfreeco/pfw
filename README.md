@@ -26,17 +26,19 @@ A CLI tool for downloading and managing [Point-Free Way](https://www.pointfree.c
 
 ## Supported AI Tools
 
-| Tool | Install Path |
+| `pfw install --tool` | Install Path |
 |------|--------------|
-| Agents (generic) | `~/.agents/skills` |
-| [Amp](https://ampcode.com/manual#agent-skills) | `~/.agents/skills` |
-| [Antigravity](https://antigravity.google/docs/skills) | `~/.gemini/antigravity/global_skills` |
-| [Claude](https://code.claude.com/docs/en/skills) | `~/.claude/skills` |
-| [Codex](https://developers.openai.com/codex/skills/) | `~/.codex/skills` |
-| [Copilot](https://docs.github.com/en/copilot/concepts/agents/about-agent-skills) | `~/.copilot/skills` |
-| [Cursor](https://cursor.com/docs/context/skills) | `~/.cursor/skills` |
-| [Droid](https://docs.factory.ai/cli/configuration/skills) | `~/.factory/skills` |
-| [Gemini](https://geminicli.com/docs/cli/skills/) | `~/.gemini/skills` |
-| [Kimi](https://moonshotai.github.io/kimi-cli/en/customization/skills) | `~/.kimi/skills` |
-| [Kiro](https://kiro.dev/docs/cli/custom-agents/configuration-reference/#skill-resources) | `~/.kiro/skills` |
-| [OpenCode](https://opencode.ai/docs/skills/) | `~/.config/opencode/skills` |
+| `agents` (generic) | `~/.agents/skills` |
+| [`amp`](https://ampcode.com/manual#agent-skills) | `~/.agents/skills` |
+| [`antigravity`](https://antigravity.google/docs/skills) | `~/.gemini/antigravity/global_skills` |
+| [`claude`](https://code.claude.com/docs/en/skills) | `~/.claude/skills` |
+| [`codex`](https://developers.openai.com/codex/skills/) | `~/.codex/skills` |
+| [`copilot`](https://docs.github.com/en/copilot/concepts/agents/about-agent-skills) | `~/.copilot/skills` |
+| [`cursor`](https://cursor.com/docs/context/skills) | `~/.cursor/skills` |
+| [`droid`](https://docs.factory.ai/cli/configuration/skills) | `~/.factory/skills` |
+| [`gemini`](https://geminicli.com/docs/cli/skills/) | `~/.gemini/skills` |
+| [`kimi`](https://moonshotai.github.io/kimi-cli/en/customization/skills) | `~/.kimi/skills` |
+| [`kiro`](https://kiro.dev/docs/cli/custom-agents/configuration-reference/#skill-resources) | `~/.kiro/skills` |
+| [`opencode`](https://opencode.ai/docs/skills/) | `~/.config/opencode/skills` |
+| [`xcode:claude`](https://developer.apple.com/documentation/Xcode/setting-up-coding-intelligence#Customize-the-Codex-and-Claude-Agent-environments) | `~/Library/Developer/Xcode/CodingAssistant/ClaudeAgentConfig/skills` |
+| [`xcode:codex`](https://developer.apple.com/documentation/Xcode/setting-up-coding-intelligence#Customize-the-Codex-and-Claude-Agent-environments) | `~/Library/Developer/Xcode/CodingAssistant/codex/skills` |
