@@ -20,8 +20,8 @@ struct Install: AsyncParsableCommand {
     case kiro
     case kimi
     case opencode
-    case xcodeClaude
-    case xcodeCodex
+    case xcodeClaude = "xcode:claude"
+    case xcodeCodex = "xcode:codex"
 
     var defaultInstallPath: URL {
       @Dependency(\.fileSystem) var fileSystem
@@ -51,8 +51,7 @@ struct Install: AsyncParsableCommand {
   @Option(
     name: .customLong("tool"),
     help: """
-      Which AI tool to install skills for. \
-      Options: \(Tool.allCases.map(\.rawValue).joined(separator: ", ")).
+      Which AI tool to install skills for.
       """
   )
   var tools: [Tool] = []
