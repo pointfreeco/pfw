@@ -225,7 +225,11 @@ struct Install: AsyncParsableCommand {
         (try? fileSystem.contentsOfDirectory(at: centralSkillsURL)) ?? []
       for directory in centralSkillDirectories {
         let toolDestination = skillsURL.appendingPathComponent("pfw-\(directory.lastPathComponent)")
-        try fileSystem.createSymbolicLink(at: toolDestination, withDestinationURL: directory)
+        if target.tool == .cursor {
+          try fileSystem.copyItem(at: directory, to: toolDestination)
+        } else {
+          try fileSystem.createSymbolicLink(at: toolDestination, withDestinationURL: directory)
+        }
       }
       if let tool = target.tool {
         print("  • \(tool.rawValue): \(skillsURL.path)")
