@@ -567,7 +567,7 @@ extension BaseSuite {
         try await assertCommand(["install", "--tool", "antigravity"]) {
           """
           Installed skills:
-            • antigravity: /Users/blob/.gemini/antigravity/global_skills
+            • antigravity: /Users/blob/.gemini/antigravity/skills
           """
         }
         assertInlineSnapshot(of: fileSystem, as: .description) {
@@ -576,7 +576,7 @@ extension BaseSuite {
             blob/
               .gemini/
                 antigravity/
-                  global_skills/
+                  skills/
                     pfw-ComposableArchitecture@ -> /Users/blob/.pfw/skills/ComposableArchitecture
                     pfw-SQLiteData@ -> /Users/blob/.pfw/skills/SQLiteData
               .pfw/

@@ -30,7 +30,7 @@ A CLI tool for downloading and managing [Point-Free Way](https://www.pointfree.c
 |------|--------------|
 | `agents` (generic) | `~/.agents/skills` |
 | [`amp`](https://ampcode.com/manual#agent-skills) | `~/.agents/skills` |
-| [`antigravity`](https://antigravity.google/docs/skills) | `~/.gemini/antigravity/global_skills` |
+| [`antigravity`](https://antigravity.google/docs/skills) | `~/.gemini/antigravity/skills` |
 | [`claude`](https://code.claude.com/docs/en/skills) | `~/.claude/skills` |
 | [`codex`](https://developers.openai.com/codex/skills/) | `~/.codex/skills` |
 | [`copilot`](https://docs.github.com/en/copilot/concepts/agents/about-agent-skills) | `~/.copilot/skills` |

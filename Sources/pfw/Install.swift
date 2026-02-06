@@ -31,7 +31,7 @@ struct Install: AsyncParsableCommand {
       case .amp:
         return home.appending(path: ".agents/skills")
       case .antigravity:
-        return home.appending(path: ".gemini/antigravity/global_skills")
+        return home.appending(path: ".gemini/antigravity/skills")
       case .droid:
         return home.appending(path: ".factory/skills")
       case .opencode:
