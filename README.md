@@ -24,6 +24,20 @@ A CLI tool for downloading and managing [Point-Free Way](https://www.pointfree.c
     $ pfw install --tool codex
     ```
 
+## Installation Options
+
+By default, `pfw` creates symbolic links from your AI tool's skills directory to a central location (`~/.pfw/skills/`). This allows skills to be updated in one place and immediately available to all tools.
+
+### When to use `--copy`
+
+If skills aren't being detected by your AI tool after installation, the tool may not support symbolic links. In this case, use the `--copy` flag to create full copies instead:
+
+```sh
+$ pfw install --tool <tool> --copy
+```
+
+> **Note:** When using `--copy`, skills are duplicated for each tool (using more disk space), and you'll need to re-run `pfw install --copy` after each update to get the latest skill versions.
+
 ## Supported AI Tools
 
 | `pfw install --tool` | Install Path |

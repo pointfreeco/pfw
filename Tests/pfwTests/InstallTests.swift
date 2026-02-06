@@ -595,6 +595,41 @@ extension BaseSuite {
         }
       }
 
+      @Test func copyInsteadOfSymlink() async throws {
+        try await assertCommand(["install", "--tool", "codex", "--copy"]) {
+          """
+          Installed skills:
+            • codex: /Users/blob/.codex/skills
+          """
+        }
+        assertInlineSnapshot(of: fileSystem, as: .description) {
+          """
+          Users/
+            blob/
+              .codex/
+                skills/
+                  pfw-ComposableArchitecture/
+                    SKILL.md "# Composable Architecture"
+                    references/
+                      navigation.md "# Navigation"
+                  pfw-SQLiteData/
+                    SKILL.md "# SQLiteData"
+              .pfw/
+                machine "00000000-0000-0000-0000-000000000001"
+                sha "cafebeef"
+                skills/
+                  ComposableArchitecture/
+                    SKILL.md "# Composable Architecture"
+                    references/
+                      navigation.md "# Navigation"
+                  SQLiteData/
+                    SKILL.md "# SQLiteData"
+                token "deadbeef"
+          tmp/
+          """
+        }
+      }
+
       @Test func opencode() async throws {
         try await assertCommand(["install", "--tool", "opencode"]) {
           """

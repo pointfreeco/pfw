@@ -68,6 +68,12 @@ struct Install: AsyncParsableCommand {
   )
   var force = false
 
+  @Flag(
+    name: .shortAndLong,
+    help: "Copy skills instead of creating symbolic links."
+  )
+  var copy = false
+
   func run() async throws {
     @Dependency(\.gitHub) var gitHub
 
@@ -225,7 +231,11 @@ struct Install: AsyncParsableCommand {
         (try? fileSystem.contentsOfDirectory(at: centralSkillsURL)) ?? []
       for directory in centralSkillDirectories {
         let toolDestination = skillsURL.appendingPathComponent("pfw-\(directory.lastPathComponent)")
-        try fileSystem.createSymbolicLink(at: toolDestination, withDestinationURL: directory)
+        if copy {
+          try fileSystem.copyItem(at: directory, to: toolDestination)
+        } else {
+          try fileSystem.createSymbolicLink(at: toolDestination, withDestinationURL: directory)
+        }
       }
       if let tool = target.tool {
         print("  • \(tool.rawValue): \(skillsURL.path)")
