@@ -319,19 +319,6 @@ final class InMemoryFileSystem: FileSystem {
         throw Error.fileExists(destinationPath)
       }
 
-      // If source is a file, copy it
-      if let data = state.files[sourcePath] {
-        state.files[destinationPath] = data
-        return
-      }
-
-      // If source is a symlink, copy the link
-      if let link = state.symbolicLinks[sourcePath] {
-        state.symbolicLinks[destinationPath] = link
-        return
-      }
-
-      // If source is a directory, copy recursively
       guard state.directories.contains(sourcePath) else {
         throw Error.fileNotFound(sourcePath)
       }
@@ -341,7 +328,6 @@ final class InMemoryFileSystem: FileSystem {
       let sourcePrefix = sourcePath.hasSuffix("/") ? sourcePath : sourcePath + "/"
       let destinationPrefix = destinationPath.hasSuffix("/") ? destinationPath : destinationPath + "/"
 
-      // Copy all subdirectories
       for directory in state.directories {
         if directory.hasPrefix(sourcePrefix) {
           let suffix = directory.dropFirst(sourcePrefix.count)
@@ -349,7 +335,6 @@ final class InMemoryFileSystem: FileSystem {
         }
       }
 
-      // Copy all files in the directory tree
       for (path, data) in state.files {
         if path.hasPrefix(sourcePrefix) {
           let suffix = path.dropFirst(sourcePrefix.count)
@@ -357,7 +342,6 @@ final class InMemoryFileSystem: FileSystem {
         }
       }
 
-      // Copy all symlinks in the directory tree
       for (path, target) in state.symbolicLinks {
         if path.hasPrefix(sourcePrefix) {
           let suffix = path.dropFirst(sourcePrefix.count)
