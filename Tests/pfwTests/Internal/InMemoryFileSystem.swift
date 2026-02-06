@@ -341,13 +341,6 @@ final class InMemoryFileSystem: FileSystem {
           state.files[destinationPrefix + suffix] = data
         }
       }
-
-      for (path, target) in state.symbolicLinks {
-        if path.hasPrefix(sourcePrefix) {
-          let suffix = path.dropFirst(sourcePrefix.count)
-          state.symbolicLinks[destinationPrefix + suffix] = target
-        }
-      }
     }
   }
 }
