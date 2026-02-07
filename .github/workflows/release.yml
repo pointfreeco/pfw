@@ -4,6 +4,24 @@ on:
     types: [published]
   workflow_dispatch:
 jobs:
+  build:
+    runs-on: macos-26
+    if: github.event_name == 'release'
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+      - name: Select Xcode 26.2
+        run: sudo xcode-select -s /Applications/Xcode_26.2.app
+      - name: Build release binary
+        run: swift build -c release --arch arm64 --arch x86_64
+      - name: Package binary
+        run: tar czf pfw-macos-universal.tar.gz -C .build/apple/Products/Release pfw
+      - name: Upload binary to release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release upload ${{ github.event.release.tag_name }} pfw-macos-universal.tar.gz
+
   project-channel:
     runs-on: ubuntu-latest
     steps:
