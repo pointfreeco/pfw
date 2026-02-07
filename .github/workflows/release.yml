@@ -23,6 +23,7 @@ jobs:
         run: gh release upload ${{ github.event.release.tag_name }} pfw-macos-universal.tar.gz
 
   project-channel:
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Dump Github context
@@ -62,6 +63,7 @@ jobs:
             ]
 
   releases-channel:
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Dump Github context
