@@ -17,12 +17,14 @@ final class InMemoryFileSystem: FileSystem {
     var directories: Set<String>
     var symbolicLinks: [String: String]
     var homeDirectoryForCurrentUser: URL
+    var currentDirectoryPath: String
   }
 
   let state: LockIsolated<State>
 
   init(
     homeDirectoryForCurrentUser: URL = URL(fileURLWithPath: "/Users/blob"),
+    currentDirectoryPath: String = "/Users/blob/project",
     files: [String: Data] = [:],
     directories: Set<String> = []
   ) {
@@ -30,7 +32,8 @@ final class InMemoryFileSystem: FileSystem {
       files: files,
       directories: directories,
       symbolicLinks: [:],
-      homeDirectoryForCurrentUser: homeDirectoryForCurrentUser
+      homeDirectoryForCurrentUser: homeDirectoryForCurrentUser,
+      currentDirectoryPath: currentDirectoryPath
     )
     self.state = LockIsolated(state)
     self.state.withValue {
@@ -127,6 +130,10 @@ final class InMemoryFileSystem: FileSystem {
 
   var homeDirectoryForCurrentUser: URL {
     state.withValue { $0.homeDirectoryForCurrentUser }
+  }
+
+  var currentDirectoryPath: String {
+    state.withValue { $0.currentDirectoryPath }
   }
 
   static var temporaryDirectory: URL {

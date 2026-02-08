@@ -68,6 +68,12 @@ struct Install: AsyncParsableCommand {
   )
   var force = false
 
+  @Flag(
+    name: .customLong("local"),
+    help: "Install skills into the current directory. Defaults to --tool agents."
+  )
+  var local = false
+
   func run() async throws {
     @Dependency(\.gitHub) var gitHub
 
@@ -96,8 +102,14 @@ struct Install: AsyncParsableCommand {
     @Dependency(\.uuid) var uuid
     @Dependency(\.whoAmI) var whoAmI
 
+    if local, !paths.isEmpty {
+      throw ValidationError("--local cannot be combined with --path.")
+    }
+
     let installTargets: [(tool: Tool?, path: String)]
-    if tools.isEmpty, paths.isEmpty {
+    if local, tools.isEmpty {
+      installTargets = [(tool: .agents, path: localInstallPath(for: .agents).path)]
+    } else if tools.isEmpty, paths.isEmpty, !local {
       let detectedTools = Tool.allCases.filter { tool in
         fileSystem.fileExists(atPath: tool.defaultInstallPath.path)
       }
@@ -107,7 +119,13 @@ struct Install: AsyncParsableCommand {
       installTargets = detectedTools.map { (tool: $0, path: $0.defaultInstallPath.path) }
     } else {
       installTargets =
-        tools.map { (tool: $0, path: $0.defaultInstallPath.path) }
+        tools.map { tool in
+          if local {
+            return (tool: tool, path: localInstallPath(for: tool).path)
+          } else {
+            return (tool: tool, path: tool.defaultInstallPath.path)
+          }
+        }
         + paths.map { (tool: nil, path: $0) }
     }
 
@@ -245,6 +263,27 @@ struct Install: AsyncParsableCommand {
 
     try? fileSystem.removeItem(at: zipURL)
     try? fileSystem.removeItem(at: tempUnzipURL)
+  }
+
+  private func localInstallPath(for tool: Tool) -> URL {
+    @Dependency(\.fileSystem) var fileSystem
+    let home = fileSystem.homeDirectoryForCurrentUser
+    let relativePath: String
+    switch tool {
+    case .opencode:
+      relativePath = ".opencode/skills"
+    default:
+      let fullPath = tool.defaultInstallPath.path
+      if fullPath.hasPrefix(home.path) {
+        relativePath = String(fullPath.dropFirst(home.path.count))
+          .trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+      } else {
+        relativePath = fullPath
+          .trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+      }
+    }
+    return URL(fileURLWithPath: fileSystem.currentDirectoryPath)
+      .appendingPathComponent(relativePath, isDirectory: true)
   }
 }
 

@@ -39,6 +39,14 @@ extension BaseSuite {
       }
     }
 
+    @Test func localCannotCombineWithPath() async throws {
+      await assertCommandThrows(["install", "--local", "--path", "/some/path"]) {
+        """
+        --local cannot be combined with --path.
+        """
+      }
+    }
+
     @Test(
       .dependencies { dependencies in
         try save(token: "expired-deadbeef")
@@ -906,6 +914,139 @@ extension BaseSuite {
           Changes since last install:
             • Added database migration guidance
             • Added TCA2.0
+          """
+        }
+      }
+
+      @Test func localDefaultsToAgents() async throws {
+        try await assertCommand(["install", "--local"]) {
+          """
+          Installed skills:
+            • agents: /Users/blob/project/.agents/skills
+          """
+        }
+        assertInlineSnapshot(of: fileSystem, as: .description) {
+          """
+          Users/
+            blob/
+              .pfw/
+                machine "00000000-0000-0000-0000-000000000001"
+                sha "cafebeef"
+                skills/
+                  ComposableArchitecture/
+                    SKILL.md "# Composable Architecture"
+                    references/
+                      navigation.md "# Navigation"
+                  SQLiteData/
+                    SKILL.md "# SQLiteData"
+                token "deadbeef"
+              project/
+                .agents/
+                  skills/
+                    pfw-ComposableArchitecture@ -> /Users/blob/.pfw/skills/ComposableArchitecture
+                    pfw-SQLiteData@ -> /Users/blob/.pfw/skills/SQLiteData
+          tmp/
+          """
+        }
+      }
+
+      @Test func localWithTool() async throws {
+        try await assertCommand(["install", "--local", "--tool", "codex"]) {
+          """
+          Installed skills:
+            • codex: /Users/blob/project/.codex/skills
+          """
+        }
+        assertInlineSnapshot(of: fileSystem, as: .description) {
+          """
+          Users/
+            blob/
+              .pfw/
+                machine "00000000-0000-0000-0000-000000000001"
+                sha "cafebeef"
+                skills/
+                  ComposableArchitecture/
+                    SKILL.md "# Composable Architecture"
+                    references/
+                      navigation.md "# Navigation"
+                  SQLiteData/
+                    SKILL.md "# SQLiteData"
+                token "deadbeef"
+              project/
+                .codex/
+                  skills/
+                    pfw-ComposableArchitecture@ -> /Users/blob/.pfw/skills/ComposableArchitecture
+                    pfw-SQLiteData@ -> /Users/blob/.pfw/skills/SQLiteData
+          tmp/
+          """
+        }
+      }
+
+      @Test func localWithMultipleTools() async throws {
+        try await assertCommand(["install", "--local", "--tool", "codex", "--tool", "claude"]) {
+          """
+          Installed skills:
+            • codex: /Users/blob/project/.codex/skills
+            • claude: /Users/blob/project/.claude/skills
+          """
+        }
+        assertInlineSnapshot(of: fileSystem, as: .description) {
+          """
+          Users/
+            blob/
+              .pfw/
+                machine "00000000-0000-0000-0000-000000000001"
+                sha "cafebeef"
+                skills/
+                  ComposableArchitecture/
+                    SKILL.md "# Composable Architecture"
+                    references/
+                      navigation.md "# Navigation"
+                  SQLiteData/
+                    SKILL.md "# SQLiteData"
+                token "deadbeef"
+              project/
+                .claude/
+                  skills/
+                    pfw-ComposableArchitecture@ -> /Users/blob/.pfw/skills/ComposableArchitecture
+                    pfw-SQLiteData@ -> /Users/blob/.pfw/skills/SQLiteData
+                .codex/
+                  skills/
+                    pfw-ComposableArchitecture@ -> /Users/blob/.pfw/skills/ComposableArchitecture
+                    pfw-SQLiteData@ -> /Users/blob/.pfw/skills/SQLiteData
+          tmp/
+          """
+        }
+      }
+
+      @Test func localWithOpencode() async throws {
+        try await assertCommand(["install", "--local", "--tool", "opencode"]) {
+          """
+          Installed skills:
+            • opencode: /Users/blob/project/.opencode/skills
+          """
+        }
+        assertInlineSnapshot(of: fileSystem, as: .description) {
+          """
+          Users/
+            blob/
+              .pfw/
+                machine "00000000-0000-0000-0000-000000000001"
+                sha "cafebeef"
+                skills/
+                  ComposableArchitecture/
+                    SKILL.md "# Composable Architecture"
+                    references/
+                      navigation.md "# Navigation"
+                  SQLiteData/
+                    SKILL.md "# SQLiteData"
+                token "deadbeef"
+              project/
+                .opencode/
+                  skills/
+                    pfw-ComposableArchitecture@ -> /Users/blob/.pfw/skills/ComposableArchitecture
+                    pfw-SQLiteData@ -> /Users/blob/.pfw/skills/SQLiteData
+          tmp/
           """
         }
       }
