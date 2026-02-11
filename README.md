@@ -9,19 +9,19 @@ A CLI tool for downloading and managing [Point-Free Way](https://www.pointfree.c
     Using [Homebrew](https://brew.sh):
 
     ```sh
-    $ brew install pointfreeco/tap/pfw
+    brew install pointfreeco/tap/pfw
     ```
 
 2. **Log into your Point-Free account**
 
     ```sh
-    $ pfw login
+    pfw login
     ```
 
 3. **Fetch the latest Point-Free Way skills**
 
     ```sh
-    $ pfw install --tool codex
+    pfw install --tool codex
     ```
 
 ## Supported AI Tools
