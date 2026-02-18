@@ -12,6 +12,7 @@ protocol FileSystem: Sendable {
   func data(at url: URL) throws -> Data
   func createSymbolicLink(at url: URL, withDestinationURL destURL: URL) throws
   func moveItem(at srcURL: URL, to dstURL: URL) throws
+  func copyItem(at srcURL: URL, to dstURL: URL) throws
   func contentsOfDirectory(at url: URL) throws -> [URL]
   func unzipItem(at sourceURL: URL, to destinationURL: URL) throws
 }
