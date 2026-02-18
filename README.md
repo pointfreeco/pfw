@@ -24,6 +24,14 @@ A CLI tool for downloading and managing [Point-Free Way](https://www.pointfree.c
     pfw install --tool codex
     ```
 
+4. **Install skills into the current working directory**
+
+    ```sh
+    $ pfw install --local
+    ```
+
+    `--local` defaults to `agents` when `--tool` is omitted.
+
 ## Supported AI Tools
 
 | `pfw install --tool` | Install Path |
