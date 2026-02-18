@@ -96,7 +96,7 @@ extension BaseSuite {
         )!
       ])
       assertInlineSnapshot(of: fileSystem, as: .description) {
-        """
+        #"""
         Users/
           blob/
             .codex/
@@ -107,10 +107,11 @@ extension BaseSuite {
               sha "cafebeef"
               skills/
                 ComposableArchitecture/
+                  .gitignore "*\n"
                   SKILL.md "# Composable Architecture"
               token "deadbeef"
         tmp/
-        """
+        """#
       }
     }
 
@@ -154,7 +155,7 @@ extension BaseSuite {
           """
         }
         assertInlineSnapshot(of: fileSystem, as: .description) {
-          """
+          #"""
           Users/
             blob/
               .codex/
@@ -166,14 +167,16 @@ extension BaseSuite {
                 sha "cafebeef"
                 skills/
                   ComposableArchitecture/
+                    .gitignore "*\n"
                     SKILL.md "# Composable Architecture"
                     references/
                       navigation.md "# Navigation"
                   SQLiteData/
+                    .gitignore "*\n"
                     SKILL.md "# SQLiteData"
                 token "deadbeef"
           tmp/
-          """
+          """#
         }
       }
 
@@ -228,7 +231,7 @@ extension BaseSuite {
         }
 
         assertInlineSnapshot(of: fileSystem, as: .description) {
-          """
+          #"""
           Users/
             blob/
               .codex/
@@ -240,12 +243,14 @@ extension BaseSuite {
                 sha "cafebeef"
                 skills/
                   ComposableArchitecture/
+                    .gitignore "*\n"
                     SKILL.md "# Composable Architecture"
                   SQLiteData/
+                    .gitignore "*\n"
                     SKILL.md "# SQLiteData"
                 token "deadbeef"
           tmp/
-          """
+          """#
         }
       }
 
@@ -258,7 +263,7 @@ extension BaseSuite {
           """
         }
         assertInlineSnapshot(of: fileSystem, as: .description) {
-          """
+          #"""
           Users/
             blob/
               .claude/
@@ -274,14 +279,16 @@ extension BaseSuite {
                 sha "cafebeef"
                 skills/
                   ComposableArchitecture/
+                    .gitignore "*\n"
                     SKILL.md "# Composable Architecture"
                     references/
                       navigation.md "# Navigation"
                   SQLiteData/
+                    .gitignore "*\n"
                     SKILL.md "# SQLiteData"
                 token "deadbeef"
           tmp/
-          """
+          """#
         }
       }
 
@@ -336,7 +343,7 @@ extension BaseSuite {
           """
         }
         assertInlineSnapshot(of: fileSystem, as: .description) {
-          """
+          #"""
           Users/
             blob/
               .codex/
@@ -348,14 +355,16 @@ extension BaseSuite {
                 sha "cafebeef"
                 skills/
                   ComposableArchitecture/
+                    .gitignore "*\n"
                     SKILL.md "# Composable Architecture"
                     references/
                       navigation.md "# Navigation"
                   SQLiteData/
+                    .gitignore "*\n"
                     SKILL.md "# SQLiteData"
                 token "deadbeef"
           tmp/
-          """
+          """#
         }
       }
 
@@ -385,7 +394,7 @@ extension BaseSuite {
           """
         }
         assertInlineSnapshot(of: fileSystem, as: .description) {
-          """
+          #"""
           Users/
             blob/
               .codex/
@@ -397,14 +406,16 @@ extension BaseSuite {
                 sha "cafebeef"
                 skills/
                   ComposableArchitecture/
+                    .gitignore "*\n"
                     SKILL.md "# Composable Architecture"
                     references/
                       navigation.md "# Navigation"
                   SQLiteData/
+                    .gitignore "*\n"
                     SKILL.md "# SQLiteData"
                 token "deadbeef"
           tmp/
-          """
+          """#
         }
       }
 
@@ -416,7 +427,7 @@ extension BaseSuite {
           """
         }
         assertInlineSnapshot(of: fileSystem, as: .description) {
-          """
+          #"""
           Users/
             blob/
               .claude/
@@ -428,14 +439,16 @@ extension BaseSuite {
                 sha "cafebeef"
                 skills/
                   ComposableArchitecture/
+                    .gitignore "*\n"
                     SKILL.md "# Composable Architecture"
                     references/
                       navigation.md "# Navigation"
                   SQLiteData/
+                    .gitignore "*\n"
                     SKILL.md "# SQLiteData"
                 token "deadbeef"
           tmp/
-          """
+          """#
         }
       }
 
@@ -447,30 +460,28 @@ extension BaseSuite {
           """
         }
         assertInlineSnapshot(of: fileSystem, as: .description) {
-          """
+          #"""
           Users/
             blob/
               .cursor/
                 skills/
-                  pfw-ComposableArchitecture/
-                    SKILL.md "# Composable Architecture"
-                    references/
-                      navigation.md "# Navigation"
-                  pfw-SQLiteData/
-                    SKILL.md "# SQLiteData"
+                  pfw-ComposableArchitecture@ -> /Users/blob/.pfw/skills/ComposableArchitecture
+                  pfw-SQLiteData@ -> /Users/blob/.pfw/skills/SQLiteData
               .pfw/
                 machine "00000000-0000-0000-0000-000000000001"
                 sha "cafebeef"
                 skills/
                   ComposableArchitecture/
+                    .gitignore "*\n"
                     SKILL.md "# Composable Architecture"
                     references/
                       navigation.md "# Navigation"
                   SQLiteData/
+                    .gitignore "*\n"
                     SKILL.md "# SQLiteData"
                 token "deadbeef"
           tmp/
-          """
+          """#
         }
       }
 
@@ -482,7 +493,7 @@ extension BaseSuite {
           """
         }
         assertInlineSnapshot(of: fileSystem, as: .description) {
-          """
+          #"""
           Users/
             blob/
               .copilot/
@@ -494,14 +505,16 @@ extension BaseSuite {
                 sha "cafebeef"
                 skills/
                   ComposableArchitecture/
+                    .gitignore "*\n"
                     SKILL.md "# Composable Architecture"
                     references/
                       navigation.md "# Navigation"
                   SQLiteData/
+                    .gitignore "*\n"
                     SKILL.md "# SQLiteData"
                 token "deadbeef"
           tmp/
-          """
+          """#
         }
       }
 
@@ -513,7 +526,7 @@ extension BaseSuite {
           """
         }
         assertInlineSnapshot(of: fileSystem, as: .description) {
-          """
+          #"""
           Users/
             blob/
               .kiro/
@@ -525,14 +538,16 @@ extension BaseSuite {
                 sha "cafebeef"
                 skills/
                   ComposableArchitecture/
+                    .gitignore "*\n"
                     SKILL.md "# Composable Architecture"
                     references/
                       navigation.md "# Navigation"
                   SQLiteData/
+                    .gitignore "*\n"
                     SKILL.md "# SQLiteData"
                 token "deadbeef"
           tmp/
-          """
+          """#
         }
       }
 
@@ -544,7 +559,7 @@ extension BaseSuite {
           """
         }
         assertInlineSnapshot(of: fileSystem, as: .description) {
-          """
+          #"""
           Users/
             blob/
               .gemini/
@@ -556,14 +571,16 @@ extension BaseSuite {
                 sha "cafebeef"
                 skills/
                   ComposableArchitecture/
+                    .gitignore "*\n"
                     SKILL.md "# Composable Architecture"
                     references/
                       navigation.md "# Navigation"
                   SQLiteData/
+                    .gitignore "*\n"
                     SKILL.md "# SQLiteData"
                 token "deadbeef"
           tmp/
-          """
+          """#
         }
       }
 
@@ -575,27 +592,35 @@ extension BaseSuite {
           """
         }
         assertInlineSnapshot(of: fileSystem, as: .description) {
-          """
+          #"""
           Users/
             blob/
               .gemini/
                 antigravity/
                   skills/
-                    pfw-ComposableArchitecture@ -> /Users/blob/.pfw/skills/ComposableArchitecture
-                    pfw-SQLiteData@ -> /Users/blob/.pfw/skills/SQLiteData
+                    pfw-ComposableArchitecture/
+                      .gitignore "*\n"
+                      SKILL.md "# Composable Architecture"
+                      references/
+                        navigation.md "# Navigation"
+                    pfw-SQLiteData/
+                      .gitignore "*\n"
+                      SKILL.md "# SQLiteData"
               .pfw/
                 machine "00000000-0000-0000-0000-000000000001"
                 sha "cafebeef"
                 skills/
                   ComposableArchitecture/
+                    .gitignore "*\n"
                     SKILL.md "# Composable Architecture"
                     references/
                       navigation.md "# Navigation"
                   SQLiteData/
+                    .gitignore "*\n"
                     SKILL.md "# SQLiteData"
                 token "deadbeef"
           tmp/
-          """
+          """#
         }
       }
 
@@ -607,7 +632,7 @@ extension BaseSuite {
           """
         }
         assertInlineSnapshot(of: fileSystem, as: .description) {
-          """
+          #"""
           Users/
             blob/
               .config/
@@ -620,14 +645,16 @@ extension BaseSuite {
                 sha "cafebeef"
                 skills/
                   ComposableArchitecture/
+                    .gitignore "*\n"
                     SKILL.md "# Composable Architecture"
                     references/
                       navigation.md "# Navigation"
                   SQLiteData/
+                    .gitignore "*\n"
                     SKILL.md "# SQLiteData"
                 token "deadbeef"
           tmp/
-          """
+          """#
         }
       }
 
@@ -639,7 +666,7 @@ extension BaseSuite {
           """
         }
         assertInlineSnapshot(of: fileSystem, as: .description) {
-          """
+          #"""
           Users/
             blob/
               .kimi/
@@ -651,14 +678,16 @@ extension BaseSuite {
                 sha "cafebeef"
                 skills/
                   ComposableArchitecture/
+                    .gitignore "*\n"
                     SKILL.md "# Composable Architecture"
                     references/
                       navigation.md "# Navigation"
                   SQLiteData/
+                    .gitignore "*\n"
                     SKILL.md "# SQLiteData"
                 token "deadbeef"
           tmp/
-          """
+          """#
         }
       }
 
@@ -670,7 +699,7 @@ extension BaseSuite {
           """
         }
         assertInlineSnapshot(of: fileSystem, as: .description) {
-          """
+          #"""
           Users/
             blob/
               .factory/
@@ -682,14 +711,16 @@ extension BaseSuite {
                 sha "cafebeef"
                 skills/
                   ComposableArchitecture/
+                    .gitignore "*\n"
                     SKILL.md "# Composable Architecture"
                     references/
                       navigation.md "# Navigation"
                   SQLiteData/
+                    .gitignore "*\n"
                     SKILL.md "# SQLiteData"
                 token "deadbeef"
           tmp/
-          """
+          """#
         }
       }
 
@@ -701,7 +732,7 @@ extension BaseSuite {
           """
         }
         assertInlineSnapshot(of: fileSystem, as: .description) {
-          """
+          #"""
           Users/
             blob/
               .agents/
@@ -713,14 +744,16 @@ extension BaseSuite {
                 sha "cafebeef"
                 skills/
                   ComposableArchitecture/
+                    .gitignore "*\n"
                     SKILL.md "# Composable Architecture"
                     references/
                       navigation.md "# Navigation"
                   SQLiteData/
+                    .gitignore "*\n"
                     SKILL.md "# SQLiteData"
                 token "deadbeef"
           tmp/
-          """
+          """#
         }
       }
 
@@ -732,7 +765,7 @@ extension BaseSuite {
           """
         }
         assertInlineSnapshot(of: fileSystem, as: .description) {
-          """
+          #"""
           Users/
             blob/
               .agents/
@@ -744,14 +777,16 @@ extension BaseSuite {
                 sha "cafebeef"
                 skills/
                   ComposableArchitecture/
+                    .gitignore "*\n"
                     SKILL.md "# Composable Architecture"
                     references/
                       navigation.md "# Navigation"
                   SQLiteData/
+                    .gitignore "*\n"
                     SKILL.md "# SQLiteData"
                 token "deadbeef"
           tmp/
-          """
+          """#
         }
       }
 
@@ -763,7 +798,7 @@ extension BaseSuite {
           """
         }
         assertInlineSnapshot(of: fileSystem, as: .description) {
-          """
+          #"""
           Users/
             blob/
               .codex/
@@ -774,14 +809,16 @@ extension BaseSuite {
                 sha "cafebeef"
                 skills/
                   ComposableArchitecture/
+                    .gitignore "*\n"
                     SKILL.md "# Composable Architecture"
                     references/
                       navigation.md "# Navigation"
                   SQLiteData/
+                    .gitignore "*\n"
                     SKILL.md "# SQLiteData"
                 token "deadbeef"
           tmp/
-          """
+          """#
         }
       }
 
@@ -851,7 +888,7 @@ extension BaseSuite {
           """
         }
         assertInlineSnapshot(of: fileSystem, as: .description) {
-          """
+          #"""
           Users/
             blob/
               .copilot/
@@ -864,14 +901,16 @@ extension BaseSuite {
                 sha "cafebeef"
                 skills/
                   ComposableArchitecture/
+                    .gitignore "*\n"
                     SKILL.md "# Composable Architecture"
                     references/
                       navigation.md "# Navigation"
                   SQLiteData/
+                    .gitignore "*\n"
                     SKILL.md "# SQLiteData"
                 token "deadbeef"
           tmp/
-          """
+          """#
         }
       }
 

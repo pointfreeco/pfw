@@ -224,8 +224,9 @@ struct Install: AsyncParsableCommand {
       let centralSkillDirectories =
         (try? fileSystem.contentsOfDirectory(at: centralSkillsURL)) ?? []
       for directory in centralSkillDirectories {
+        try fileSystem.write(Data("*\n".utf8), to: directory.appendingPathComponent(".gitignore"))
         let toolDestination = skillsURL.appendingPathComponent("pfw-\(directory.lastPathComponent)")
-        if target.tool == .cursor {
+        if target.tool == .antigravity {
           try fileSystem.copyItem(at: directory, to: toolDestination)
         } else {
           try fileSystem.createSymbolicLink(at: toolDestination, withDestinationURL: directory)
