@@ -326,7 +326,8 @@ final class InMemoryFileSystem: FileSystem {
       state.directories.insert(destinationPath)
 
       let sourcePrefix = sourcePath.hasSuffix("/") ? sourcePath : sourcePath + "/"
-      let destinationPrefix = destinationPath.hasSuffix("/") ? destinationPath : destinationPath + "/"
+      let destinationPrefix =
+        destinationPath.hasSuffix("/") ? destinationPath : destinationPath + "/"
 
       for directory in state.directories {
         if directory.hasPrefix(sourcePrefix) {
