@@ -2,6 +2,47 @@ import ArgumentParser
 import Dependencies
 import Foundation
 
+var machineURL: URL {
+  pfwDirectoryURL.appendingPathComponent("machine")
+}
+
+var tokenURL: URL {
+  pfwDirectoryURL.appendingPathComponent("token")
+}
+
+var shaURL: URL {
+  pfwDirectoryURL.appendingPathComponent("sha")
+}
+
+var pfwDirectoryURL: URL {
+  pfwDirectoryEnvOverride ?? xdgDirectoryURL ?? defaultPfwDirectoryURL
+}
+
+private var defaultPfwDirectoryURL: URL {
+  @Dependency(\.fileSystem) var fileSystem
+  return fileSystem.homeDirectoryForCurrentUser
+    .appendingPathComponent(".pfw", isDirectory: true)
+}
+
+private var pfwDirectoryEnvOverride: URL? {
+  let pfwHome = ProcessInfo.processInfo.environment["PFW_HOME"]
+  if let path = pfwHome?.trimmingCharacters(in: .whitespacesAndNewlines), !path.isEmpty {
+    return URL(fileURLWithPath: path, isDirectory: true)
+  } else {
+    return nil
+  }
+}
+
+private var xdgDirectoryURL: URL? {
+  let xdgConfigDir = ProcessInfo.processInfo.environment["XDG_CONFIG_HOME"]
+  if let path = xdgConfigDir?.trimmingCharacters(in: .whitespacesAndNewlines), !path.isEmpty {
+    return URL(fileURLWithPath: path, isDirectory: true)
+      .appendingPathComponent("pfw", isDirectory: true)
+  } else {
+    return nil
+  }
+}
+
 func machine() throws -> UUID {
   @Dependency(\.fileSystem) var fileSystem
   @Dependency(\.uuid) var uuid
@@ -17,16 +58,6 @@ func machine() throws -> UUID {
     return newMachine
   }
 }
-
-var pfwDirectoryURL: URL {
-  @Dependency(\.fileSystem) var fileSystem
-  return fileSystem.homeDirectoryForCurrentUser
-    .appendingPathComponent(".pfw", isDirectory: true)
-}
-
-let machineURL = pfwDirectoryURL.appendingPathComponent("machine")
-let tokenURL = pfwDirectoryURL.appendingPathComponent("token")
-let shaURL = pfwDirectoryURL.appendingPathComponent("sha")
 
 func save(token: String) throws {
   @Dependency(\.fileSystem) var fileSystem
