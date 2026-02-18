@@ -658,6 +658,37 @@ extension BaseSuite {
         }
       }
 
+      @Test func pi() async throws {
+        try await assertCommand(["install", "--tool", "pi"]) {
+          """
+          Installed skills:
+            • pi: /Users/blob/.pi/skills
+          """
+        }
+        assertInlineSnapshot(of: fileSystem, as: .description) {
+          """
+          Users/
+            blob/
+              .pfw/
+                machine "00000000-0000-0000-0000-000000000001"
+                sha "cafebeef"
+                skills/
+                  ComposableArchitecture/
+                    SKILL.md "# Composable Architecture"
+                    references/
+                      navigation.md "# Navigation"
+                  SQLiteData/
+                    SKILL.md "# SQLiteData"
+                token "deadbeef"
+              .pi/
+                skills/
+                  pfw-ComposableArchitecture@ -> /Users/blob/.pfw/skills/ComposableArchitecture
+                  pfw-SQLiteData@ -> /Users/blob/.pfw/skills/SQLiteData
+          tmp/
+          """
+        }
+      }
+
       @Test func kimi() async throws {
         try await assertCommand(["install", "--tool", "kimi"]) {
           """
