@@ -40,5 +40,6 @@ A CLI tool for downloading and managing [Point-Free Way](https://www.pointfree.c
 | [`kimi`](https://moonshotai.github.io/kimi-cli/en/customization/skills) | `~/.kimi/skills` |
 | [`kiro`](https://kiro.dev/docs/cli/custom-agents/configuration-reference/#skill-resources) | `~/.kiro/skills` |
 | [`opencode`](https://opencode.ai/docs/skills/) | `~/.config/opencode/skills` |
+| [`pi`](https://github.com/badlogic/pi-mono/tree/main/packages/coding-agent#skills) | `~/.pi/skills` |
 | [`xcode:claude`](https://developer.apple.com/documentation/Xcode/setting-up-coding-intelligence#Customize-the-Codex-and-Claude-Agent-environments) | `~/Library/Developer/Xcode/CodingAssistant/ClaudeAgentConfig/skills` |
 | [`xcode:codex`](https://developer.apple.com/documentation/Xcode/setting-up-coding-intelligence#Customize-the-Codex-and-Claude-Agent-environments) | `~/Library/Developer/Xcode/CodingAssistant/codex/skills` |

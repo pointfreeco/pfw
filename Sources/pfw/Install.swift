@@ -20,6 +20,7 @@ struct Install: AsyncParsableCommand {
     case kiro
     case kimi
     case opencode
+    case pi
     case xcodeClaude = "xcode:claude"
     case xcodeCodex = "xcode:codex"
 
