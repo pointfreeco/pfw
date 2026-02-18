@@ -666,7 +666,7 @@ extension BaseSuite {
           """
         }
         assertInlineSnapshot(of: fileSystem, as: .description) {
-          """
+          #"""
           Users/
             blob/
               .pfw/
@@ -674,10 +674,12 @@ extension BaseSuite {
                 sha "cafebeef"
                 skills/
                   ComposableArchitecture/
+                    .gitignore "*\n"
                     SKILL.md "# Composable Architecture"
                     references/
                       navigation.md "# Navigation"
                   SQLiteData/
+                    .gitignore "*\n"
                     SKILL.md "# SQLiteData"
                 token "deadbeef"
               .pi/
@@ -685,7 +687,7 @@ extension BaseSuite {
                   pfw-ComposableArchitecture@ -> /Users/blob/.pfw/skills/ComposableArchitecture
                   pfw-SQLiteData@ -> /Users/blob/.pfw/skills/SQLiteData
           tmp/
-          """
+          """#
         }
       }
 
