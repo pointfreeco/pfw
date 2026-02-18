@@ -626,7 +626,7 @@ extension BaseSuite {
           """
         }
       }
-      
+
       @Test func pi() async throws {
         try await assertCommand(["install", "--tool", "pi"]) {
           """
