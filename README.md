@@ -24,6 +24,11 @@ A CLI tool for downloading and managing [Point-Free Way](https://www.pointfree.c
     pfw install --tool codex
     ```
 
+## Configuration directory
+
+Resolution order: `PFW_HOME` → `XDG_CONFIG_HOME/pfw` → `~/.pfw`.
+Set the environment variable before running `pfw login`.
+
 ## Supported AI Tools
 
 | `pfw install --tool` | Install Path |
