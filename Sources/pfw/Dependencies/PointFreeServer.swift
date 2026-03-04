@@ -38,14 +38,12 @@ struct LivePointFreeServer: PointFreeServer {
         "\(URL.baseURL)/account/the-way/download?token=\(token)&machine=\(machine)&whoami=\(whoami)"
     )!
     var request = URLRequest(url: url)
+    request.cachePolicy = .reloadIgnoringLocalCacheData
     request.setValue(PFW.configuration.version, forHTTPHeaderField: "X-PFW-Version")
     if let sha, !sha.isEmpty {
       request.setValue(sha, forHTTPHeaderField: "If-None-Match")
     }
-    let config = URLSessionConfiguration.default
-    config.urlCache = nil
-    let session = URLSession(configuration: config)
-    let (data, response) = try await session.data(for: request)
+    let (data, response) = try await URLSession.shared.data(for: request)
     guard let httpResponse = response as? HTTPURLResponse else {
       throw PointFreeServerError.invalidResponse
     }
