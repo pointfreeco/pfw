@@ -4,6 +4,7 @@ import ZIPFoundation
 
 protocol FileSystem: Sendable {
   var homeDirectoryForCurrentUser: URL { get }
+  var currentDirectoryPath: String { get }
   static var temporaryDirectory: URL { get }
   func createDirectory(at url: URL, withIntermediateDirectories createIntermediates: Bool) throws
   func removeItem(at url: URL) throws
