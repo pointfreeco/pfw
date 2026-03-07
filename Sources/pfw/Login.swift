@@ -4,11 +4,7 @@ import Foundation
 
 struct Login: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
-    abstract: "Log into your Point-Free account.",
-    discussion: """
-      Config directory resolution: PFW_HOME → XDG_CONFIG_HOME/pfw → ~/.pfw.
-      Set the environment variable before running the command.
-      """
+    abstract: "Log into your Point-Free account."
   )
 
   @Option(help: "Paste the token received from the browser redirect.")
