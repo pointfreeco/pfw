@@ -19,14 +19,26 @@ func machine() throws -> UUID {
 }
 
 var pfwDirectoryURL: URL {
-  @Dependency(\.fileSystem) var fileSystem
-  return fileSystem.homeDirectoryForCurrentUser
-    .appendingPathComponent(".pfw", isDirectory: true)
+    @Dependency(\.environment) var environment
+    @Dependency(\.fileSystem) var fileSystem
+    if let path = environment["PFW_HOME"]?.trimmingCharacters(in: .whitespacesAndNewlines),
+       !path.isEmpty
+    {
+        return URL(fileURLWithPath: path, isDirectory: true)
+    }
+    if let path = environment["XDG_CONFIG_HOME"]?.trimmingCharacters(in: .whitespacesAndNewlines),
+       !path.isEmpty
+    {
+        return URL(fileURLWithPath: path, isDirectory: true)
+            .appendingPathComponent("pfw", isDirectory: true)
+    }
+    return fileSystem.homeDirectoryForCurrentUser
+        .appendingPathComponent(".pfw", isDirectory: true)
 }
 
-let machineURL = pfwDirectoryURL.appendingPathComponent("machine")
-let tokenURL = pfwDirectoryURL.appendingPathComponent("token")
-let shaURL = pfwDirectoryURL.appendingPathComponent("sha")
+var machineURL: URL { pfwDirectoryURL.appendingPathComponent("machine") }
+var tokenURL: URL { pfwDirectoryURL.appendingPathComponent("token") }
+var shaURL: URL { pfwDirectoryURL.appendingPathComponent("sha") }
 
 func save(token: String) throws {
   @Dependency(\.fileSystem) var fileSystem
