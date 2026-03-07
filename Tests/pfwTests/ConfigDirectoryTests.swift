@@ -16,14 +16,14 @@ extension BaseSuite {
       .dependencies {
         $0.fileSystem = InMemoryFileSystem(
           homeDirectoryForCurrentUser: URL(fileURLWithPath: "/root"))
+        $0.environment = TestEnvironment([
+            "PFW_HOME": "/root/custom",
+            "XDG_CONFIG_HOME": "/root/.xdg"
+        ])
       }
     )
     func configDirUsesPfwHomeWhenPresent() throws {
-      try withEnvironment("PFW_HOME", "/root/custom") {
-        try withEnvironment("XDG_CONFIG_HOME", "/root/.xdg") {
-          try save(token: "deadbeef")
-        }
-      }
+      try save(token: "deadbeef")
       assertInlineSnapshot(of: fileSystem, as: .description) {
         """
         root/
@@ -38,14 +38,11 @@ extension BaseSuite {
       .dependencies {
         $0.fileSystem = InMemoryFileSystem(
           homeDirectoryForCurrentUser: URL(fileURLWithPath: "/root"))
+        $0.environment = TestEnvironment(["XDG_CONFIG_HOME": "/root/.xdg"])
       }
     )
     func configDirUsesXdgWhenPresent() throws {
-      try withEnvironment("PFW_HOME", nil) {
-        try withEnvironment("XDG_CONFIG_HOME", "/root/.xdg") {
-          try save(token: "deadbeef")
-        }
-      }
+      try save(token: "deadbeef")
       assertInlineSnapshot(of: fileSystem, as: .description) {
         """
         root/
@@ -64,11 +61,7 @@ extension BaseSuite {
       }
     )
     func configDirFallsBackToLegacy() throws {
-      try withEnvironment("PFW_HOME", nil) {
-        try withEnvironment("XDG_CONFIG_HOME", nil) {
-          try save(token: "deadbeef")
-        }
-      }
+      try save(token: "deadbeef")
       assertInlineSnapshot(of: fileSystem, as: .description) {
         """
         root/

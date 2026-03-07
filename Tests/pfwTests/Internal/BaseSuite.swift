@@ -15,6 +15,7 @@ import Testing
     $0.pointFreeServer = InMemoryPointFreeServer(result: .failure(.invalidResponse))
     $0.gitHub = InMemoryGitHub(tags: [])
     $0.whoAmI = TestWhoAmI("blob")
+    $0.environment = TestEnvironment()
   }
 )
 @MainActor
