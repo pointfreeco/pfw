@@ -107,6 +107,13 @@ final class InMemoryFileSystem: FileSystem {
     }
   }
 
+  func isDirectory(atPath path: String) -> Bool {
+    let normalizedPath = normalize(path)
+    return state.withValue { state in
+      state.directories.contains(normalizedPath)
+    }
+  }
+
   func unzipItem(
     at sourceURL: URL, to destinationURL: URL
   ) throws {

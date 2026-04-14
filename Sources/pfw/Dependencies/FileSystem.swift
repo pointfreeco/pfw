@@ -8,6 +8,7 @@ protocol FileSystem: Sendable {
   func createDirectory(at url: URL, withIntermediateDirectories createIntermediates: Bool) throws
   func removeItem(at url: URL) throws
   func fileExists(atPath path: String) -> Bool
+  func isDirectory(atPath path: String) -> Bool
   func write(_ data: Data, to url: URL) throws
   func data(at url: URL) throws -> Data
   func createSymbolicLink(at url: URL, withDestinationURL destURL: URL) throws
@@ -28,6 +29,14 @@ extension FileManager: FileSystem {
 
   static var temporaryDirectory: URL {
     URL.temporaryDirectory
+  }
+
+  func isDirectory(atPath path: String) -> Bool {
+    var isDirectory = ObjCBool(false)
+    guard fileExists(atPath: path, isDirectory: &isDirectory) else {
+      return false
+    }
+    return isDirectory.boolValue
   }
 
   func write(_ data: Data, to url: URL) throws {
