@@ -189,7 +189,9 @@ struct Install: AsyncParsableCommand {
         try? fileSystem.removeItem(at: url)
       }
 
-      let skillDirectories = (try? fileSystem.contentsOfDirectory(at: skillsSourceURL)) ?? []
+      let skillDirectories =
+        ((try? fileSystem.contentsOfDirectory(at: skillsSourceURL)) ?? [])
+        .filter { fileSystem.isDirectory(atPath: $0.path) }
       for directory in skillDirectories {
         guard directory.lastPathComponent != "commit-messages.json"
         else { continue }
@@ -223,7 +225,8 @@ struct Install: AsyncParsableCommand {
       }
 
       let centralSkillDirectories =
-        (try? fileSystem.contentsOfDirectory(at: centralSkillsURL)) ?? []
+        ((try? fileSystem.contentsOfDirectory(at: centralSkillsURL)) ?? [])
+        .filter { fileSystem.isDirectory(atPath: $0.path) }
       for directory in centralSkillDirectories {
         try fileSystem.write(Data("*\n".utf8), to: directory.appendingPathComponent(".gitignore"))
         let toolDestination = skillsURL.appendingPathComponent("pfw-\(directory.lastPathComponent)")

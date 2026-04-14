@@ -92,5 +92,22 @@ extension BaseSuite {
         """
       }
     }
+
+    @Test func skillsInstalledIgnoresFiles() async throws {
+      let skillsURL = URL(fileURLWithPath: "/Users/blob/.pfw/skills")
+      try fileSystem.createDirectory(at: skillsURL, withIntermediateDirectories: true)
+      try fileSystem.createDirectory(
+        at: skillsURL.appendingPathComponent("ComposableArchitecture"),
+        withIntermediateDirectories: false
+      )
+      try fileSystem.write(Data(), to: skillsURL.appendingPathComponent(".DS_Store"))
+
+      try await assertCommand(["list"]) {
+        """
+        Skills:
+          - ComposableArchitecture
+        """
+      }
+    }
   }
 }
