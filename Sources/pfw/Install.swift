@@ -37,6 +37,8 @@ struct Install: AsyncParsableCommand {
         return home.appending(path: ".factory/skills")
       case .opencode:
         return home.appending(path: ".config/opencode/skills")
+      case .pi:
+        return home.appending(path: ".pi/agent/skills")
       case .xcodeClaude:
         return home.appending(
           path: "Library/Developer/Xcode/CodingAssistant/ClaudeAgentConfig/skills"
