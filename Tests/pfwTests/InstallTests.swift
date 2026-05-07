@@ -662,7 +662,7 @@ extension BaseSuite {
         try await assertCommand(["install", "--tool", "pi"]) {
           """
           Installed skills:
-            • pi: /Users/blob/.pi/skills
+            • pi: /Users/blob/.pi/agent/skills
           """
         }
         assertInlineSnapshot(of: fileSystem, as: .description) {
@@ -683,9 +683,10 @@ extension BaseSuite {
                     SKILL.md "# SQLiteData"
                 token "deadbeef"
               .pi/
-                skills/
-                  pfw-ComposableArchitecture@ -> /Users/blob/.pfw/skills/ComposableArchitecture
-                  pfw-SQLiteData@ -> /Users/blob/.pfw/skills/SQLiteData
+                agent/
+                  skills/
+                    pfw-ComposableArchitecture@ -> /Users/blob/.pfw/skills/ComposableArchitecture
+                    pfw-SQLiteData@ -> /Users/blob/.pfw/skills/SQLiteData
           tmp/
           """#
         }
