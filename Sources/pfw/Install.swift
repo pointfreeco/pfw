@@ -23,6 +23,7 @@ struct Install: AsyncParsableCommand {
     case pi
     case xcodeClaude = "xcode:claude"
     case xcodeCodex = "xcode:codex"
+    case xcodeGemini = "xcode:gemini"
 
     var defaultInstallPath: URL {
       @Dependency(\.fileSystem) var fileSystem
@@ -45,6 +46,10 @@ struct Install: AsyncParsableCommand {
         )
       case .xcodeCodex:
         return home.appending(path: "Library/Developer/Xcode/CodingAssistant/codex/skills")
+      case .xcodeGemini:
+        return home.appending(
+          path: "Library/Developer/Xcode/CodingAssistant/gemini/.gemini/skills"
+        )
       default:
         return home.appending(path: ".\(rawValue)/skills")
       }
