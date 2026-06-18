@@ -196,10 +196,8 @@ struct Install: AsyncParsableCommand {
         try? fileSystem.removeItem(at: url)
       }
 
-      let skillDirectories = (try? fileSystem.contentsOfDirectory(at: skillsSourceURL)) ?? []
+      let skillDirectories = fileSystem.loadSkillDirectories(from: skillsSourceURL)
       for directory in skillDirectories {
-        guard directory.lastPathComponent != "commit-messages.json"
-        else { continue }
         let centralDestination = centralSkillsURL.appendingPathComponent(
           directory.lastPathComponent
         )
@@ -229,8 +227,7 @@ struct Install: AsyncParsableCommand {
         try? fileSystem.removeItem(at: url)
       }
 
-      let centralSkillDirectories =
-        (try? fileSystem.contentsOfDirectory(at: centralSkillsURL)) ?? []
+      let centralSkillDirectories = fileSystem.loadSkillDirectories(from: centralSkillsURL)
       for directory in centralSkillDirectories {
         try fileSystem.write(Data("*\n".utf8), to: directory.appendingPathComponent(".gitignore"))
         let toolDestination = skillsURL.appendingPathComponent("pfw-\(directory.lastPathComponent)")
@@ -267,4 +264,11 @@ private func loadCommitMessages(
 ) -> [String]? {
   guard let data = try? fileSystem.data(at: url) else { return nil }
   return try? JSONDecoder().decode([String].self, from: data)
+}
+
+extension FileSystem {
+  fileprivate func loadSkillDirectories(from url: URL) -> [URL] {
+    ((try? contentsOfDirectory(at: url)) ?? [])
+      .filter { fileExists(atPath: $0.appendingPathComponent("SKILL.md").path) }
+  }
 }
