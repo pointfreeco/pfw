@@ -254,6 +254,67 @@ extension BaseSuite {
         }
       }
 
+      @Test(
+        .dependencies {
+          try await $0.login()
+          $0.pointFreeServer = InMemoryPointFreeServer(result: .success(.notModified))
+          try $0.fileSystem.createDirectory(
+            at: URL(filePath: "/Users/blob/.pfw/skills/ComposableArchitecture"),
+            withIntermediateDirectories: true
+          )
+          try $0.fileSystem.write(
+            Data("# Composable Architecture".utf8),
+            to: URL(filePath: "/Users/blob/.pfw/skills/ComposableArchitecture/SKILL.md")
+          )
+          try $0.fileSystem.createDirectory(
+            at: URL(filePath: "/Users/blob/.pfw/skills/SQLiteData"),
+            withIntermediateDirectories: true
+          )
+          try $0.fileSystem.write(
+            Data("# SQLiteData".utf8),
+            to: URL(filePath: "/Users/blob/.pfw/skills/SQLiteData/SKILL.md")
+          )
+          try $0.fileSystem.write(
+            Data(),
+            to: URL(filePath: "/Users/blob/.pfw/skills/.DS_Store")
+          )
+          try save(sha: "cafebeef")
+        }
+      )
+      func upToDateIgnoresFilesInCentralSkillsDirectory() async throws {
+        try await assertCommand(["install", "--tool", "codex"]) {
+          """
+          Skills up-to-date.
+          Installed skills:
+            • codex: /Users/blob/.codex/skills
+          """
+        }
+
+        assertInlineSnapshot(of: fileSystem, as: .description) {
+          #"""
+          Users/
+            blob/
+              .codex/
+                skills/
+                  pfw-ComposableArchitecture@ -> /Users/blob/.pfw/skills/ComposableArchitecture
+                  pfw-SQLiteData@ -> /Users/blob/.pfw/skills/SQLiteData
+              .pfw/
+                machine "00000000-0000-0000-0000-000000000002"
+                sha "cafebeef"
+                skills/
+                  .DS_Store ""
+                  ComposableArchitecture/
+                    .gitignore "*\n"
+                    SKILL.md "# Composable Architecture"
+                  SQLiteData/
+                    .gitignore "*\n"
+                    SKILL.md "# SQLiteData"
+                token "deadbeef"
+          tmp/
+          """#
+        }
+      }
+
       @Test func multipleTools() async throws {
         try await assertCommand(["install", "--tool", "codex", "--tool", "claude"]) {
           """
