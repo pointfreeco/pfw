@@ -17,7 +17,9 @@ struct List: ParsableCommand {
       return
     }
 
-    let skillDirectories = (try? fileSystem.contentsOfDirectory(at: centralSkillsURL)) ?? []
+    let skillDirectories =
+      ((try? fileSystem.contentsOfDirectory(at: centralSkillsURL)) ?? [])
+      .filter { fileSystem.isDirectory(atPath: $0.path) }
     let skills =
       skillDirectories
       .map { $0.lastPathComponent }

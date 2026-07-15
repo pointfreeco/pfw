@@ -197,6 +197,7 @@ struct Install: AsyncParsableCommand {
       }
 
       let skillDirectories = fileSystem.loadSkillDirectories(from: skillsSourceURL)
+        .filter { fileSystem.isDirectory(atPath: $0.path) }
       for directory in skillDirectories {
         let centralDestination = centralSkillsURL.appendingPathComponent(
           directory.lastPathComponent
@@ -228,6 +229,7 @@ struct Install: AsyncParsableCommand {
       }
 
       let centralSkillDirectories = fileSystem.loadSkillDirectories(from: centralSkillsURL)
+        .filter { fileSystem.isDirectory(atPath: $0.path) }
       for directory in centralSkillDirectories {
         try fileSystem.write(Data("*\n".utf8), to: directory.appendingPathComponent(".gitignore"))
         let toolDestination = skillsURL.appendingPathComponent("pfw-\(directory.lastPathComponent)")
