@@ -35,11 +35,8 @@ jobs:
       matrix:
         swift:
           - '6.3.0'
+    container: swift:${{ matrix.swift }}
     steps:
       - uses: actions/checkout@v5
-      - name: Install Swift ${{ matrix.swift }}
-        uses: swift-actions/setup-swift@v3
-        with:
-          swift-version: ${{ matrix.swift }}
       - name: Test
         run: swift test
