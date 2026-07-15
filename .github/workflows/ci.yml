@@ -34,7 +34,7 @@ jobs:
     strategy:
       matrix:
         swift:
-          - '6.2.3'
+          - '6.3.0'
     steps:
       - uses: actions/checkout@v5
       - name: Install Swift ${{ matrix.swift }}
